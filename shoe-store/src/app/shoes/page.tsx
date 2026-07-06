@@ -2,8 +2,8 @@ import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
 import { eq, and, like, desc, sql, gte, lte } from 'drizzle-orm';
 import { ProductCard } from '@/components/product-card';
+import { SortDropdown } from '@/components/sort-dropdown';
 import { formatPrice } from '@/lib/utils';
-import { CATEGORIES, BRANDS } from '@/lib/validations';
 import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
@@ -118,19 +118,7 @@ export default async function ShoesPage({ searchParams }: PageProps) {
           </form>
           
           {/* Sort */}
-          <select 
-            className="input max-w-[160px] bg-white"
-            defaultValue={searchParams.sort || 'newest'}
-            onChange={(e) => {
-              const url = new URL(window.location.href);
-              url.searchParams.set('sort', e.target.value);
-              window.location.href = url.toString();
-            }}
-          >
-            <option value="newest">Newest</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-          </select>
+          <SortDropdown sort={searchParams.sort} />
         </div>
       </div>
 
