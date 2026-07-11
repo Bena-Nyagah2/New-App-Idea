@@ -120,11 +120,30 @@ export default function CheckoutPage() {
         useCartStore.getState().clearCart();
         router.push(`/checkout/success?orderId=${orderId}&method=cod`);
       } else {
-        // Paystack: initialize payment
+        // Paystack: initialize payment with full shipping metadata
         const res = await fetch('/api/payments', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(checkoutData),
+          body: JSON.stringify({
+            email: formData.email,
+            name: formData.name,
+            phone: formData.phone,
+            county: formData.county,
+            area: formData.area,
+            address: formData.address,
+            deliveryType: formData.deliveryType,
+            deliveryFee: finalDeliveryFee,
+            subtotal,
+            total,
+            notes: formData.notes,
+            items: items.map(item => ({
+              variantId: item.variantId,
+              quantity: item.quantity,
+              productName: item.productName,
+              variantSize: item.variantSize,
+              unitPrice: item.unitPrice,
+            })),
+          }),
         });
 
         if (!res.ok) throw new Error((await res.json()).error || 'Payment failed');

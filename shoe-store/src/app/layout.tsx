@@ -6,6 +6,9 @@ import { Footer } from '@/components/footer';
 import { Providers } from './providers';
 import { ThemeProvider } from '@/components/theme-provider';
 import { DiscountBanner } from '@/components/discount-banner';
+import { db } from '@/lib/db';
+import { settings } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 const fredoka = Fredoka({
   subsets: ['latin'],
@@ -63,20 +66,48 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
+async function getServerTheme(): Promise<string> {
+  try {
+    const result = await db.select({ value: settings.value }).from(settings).where(eq(settings.key, 'theme')).limit(1);
+    return result.length > 0 ? result[0].value : 'default';
+  } catch {
+    return 'default';
+  }
+}
+
+async function getServerThemeMode(): Promise<string> {
+  try {
+    const result = await db.select({ value: settings.value }).from(settings).where(eq(settings.key, 'theme-mode')).limit(1);
+    return result.length > 0 ? result[0].value : 'auto';
+  } catch {
+    return 'auto';
+  }
+}
+
+const VALID_THEMES = ['default', 'christmas', 'easter', 'back-to-school', 'black-friday'];
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [theme, themeMode] = await Promise.all([getServerTheme(), getServerThemeMode()]);
+  const safeTheme = VALID_THEMES.includes(theme) ? theme : 'default';
+
+  const themeClasses = [
+    safeTheme !== 'default' ? `theme-${safeTheme}` : '',
+    themeMode === 'dark' ? 'dark' : '',
+  ].filter(Boolean).join(' ');
+
   return (
-    <html lang="en-KE" className={`${fredoka.variable} ${nunito.variable} antialiased`}>
+    <html lang="en-KE" className={`${fredoka.variable} ${nunito.variable} antialiased ${themeClasses}`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://api.paystack.co" />
       </head>
-      <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900 font-[var(--font-body)]">
+      <body className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--font-body)] text-[var(--color-text)]">
         <Providers>
-          <ThemeProvider>
+          <ThemeProvider initialTheme={safeTheme} initialMode={themeMode}>
             <DiscountBanner />
             <Header />
             <main className="flex-1">{children}</main>

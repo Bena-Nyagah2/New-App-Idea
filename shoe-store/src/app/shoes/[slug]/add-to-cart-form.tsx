@@ -49,7 +49,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       variantSize: selectedVariant.size,
       variantColor: selectedVariant.color,
       variantColorHex: selectedVariant.colorHex,
-      image: product.images[0] || '/placeholder.jpg',
+      image: product.images[0] || '/placeholder.svg',
       unitPrice: product.basePrice,
       costPrice: 0,
       quantity: 1,

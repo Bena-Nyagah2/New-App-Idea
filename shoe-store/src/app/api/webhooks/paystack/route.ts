@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { orders, orderItems, variants } from '@/lib/db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { orders, orderItems, variants, products } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { verifyWebhookSignature } from '@/lib/paystack';
 import { sendOrderConfirmationEmail, sendAdminNewOrderEmail } from '@/lib/brevo';
 
@@ -20,117 +20,91 @@ export async function POST(request: Request) {
     const eventType = event.event;
 
     if (eventType === 'charge.success') {
-      const { reference, amount, metadata, customer } = event.data;
+      const { reference, amount, metadata } = event.data;
 
-      // Check if order already exists (idempotent)
-      const existing = await db.select({ id: orders.id })
+      // Find existing pending order by reference
+      const existingOrder = await db.select()
         .from(orders)
-        .where(eq(orders.paystackReference, reference));
+        .where(eq(orders.paystackReference, reference))
+        .limit(1);
 
-      if (existing.length > 0) {
+      if (existingOrder.length === 0) {
+        console.error('Webhook received for unknown reference:', reference);
+        return NextResponse.json({ status: 'Order not found' });
+      }
+
+      const order = existingOrder[0];
+
+      // Already confirmed — idempotent
+      if (order.paymentStatus === 'paid' && order.status === 'confirmed') {
         return NextResponse.json({ status: 'Already processed' });
       }
 
-      const orderId = crypto.randomUUID();
-      const itemsData: any[] = metadata?.items ? JSON.parse(metadata.items) : [];
-
-      // Validate stock for every item before inserting anything
-      const stockErrors: string[] = [];
-      const validItems: any[] = [];
-
-      for (const item of itemsData) {
-        const variant = await db.select().from(variants).where(eq(variants.id, item.variantId)).limit(1);
-        if (variant.length === 0) {
-          stockErrors.push(`Variant ${item.variantId} not found`);
-          continue;
-        }
-        const v = variant[0];
-        const qty = item.quantity || 1;
-        if (v.stock < qty) {
-          stockErrors.push(`${item.variantId} only has ${v.stock} in stock (requested ${qty})`);
-          continue;
-        }
-        validItems.push({ ...item, resolvedVariant: v, quantity: qty });
-      }
-
-      if (stockErrors.length > 0) {
-        console.error('Webhook stock validation failed:', stockErrors);
-        // Still return 200 so Paystack doesn't retry — but log for manual review
-        return NextResponse.json({ status: 'Stock validation failed', errors: stockErrors });
-      }
-
-      // Create order
-      await db.insert(orders).values({
-        id: orderId,
-        customerEmail: customer?.email || metadata?.email || '',
-        customerName: metadata?.name || customer?.first_name || '',
-        customerPhone: metadata?.phone || '',
-        shippingAddress: metadata?.address || '',
-        county: metadata?.county || 'nairobi',
-        deliveryType: metadata?.deliveryType || 'boda',
-        deliveryFee: metadata?.deliveryFee || 0,
+      // Confirm the order
+      await db.update(orders).set({
         status: 'confirmed',
-        paymentMethod: 'paystack',
         paymentStatus: 'paid',
-        paystackReference: reference,
-        subtotal: metadata?.subtotal || amount,
-        tax: 0,
-        total: amount,
-        notes: metadata?.notes || null,
-      });
+        confirmedAt: new Date(),
+      }).where(eq(orders.id, order.id));
 
-      // Create order items + decrement stock
-      for (const item of validItems) {
-        const v = item.resolvedVariant;
-        await db.insert(orderItems).values({
-          id: crypto.randomUUID(),
-          orderId,
-          variantId: v.id,
-          productName: item.productName || '',
-          variantSize: item.variantSize || v.size || '',
-          variantColor: item.variantColor || v.color || '',
-          quantity: item.quantity,
-          unitPrice: item.unitPrice || 0,
-          totalPrice: (item.unitPrice || 0) * item.quantity,
-        });
+      // Fetch order items for email
+      const items = await db.select()
+        .from(orderItems)
+        .where(eq(orderItems.orderId, order.id));
 
-        // Decrement stock
-        await db.update(variants)
-          .set({ stock: sql`GREATEST(${variants.stock} - ${item.quantity}, 0)` })
-          .where(eq(variants.id, v.id));
+      // Resolve product names for items
+      for (const item of items) {
+        if (!item.productName) {
+          const variant = await db.select({ productId: variants.productId })
+            .from(variants)
+            .where(eq(variants.id, item.variantId))
+            .limit(1);
+          if (variant.length > 0) {
+            const product = await db.select({ name: products.name })
+              .from(products)
+              .where(eq(products.id, variant[0].productId))
+              .limit(1);
+            if (product.length > 0) {
+              await db.update(orderItems)
+                .set({ productName: product[0].name })
+                .where(eq(orderItems.id, item.id));
+              item.productName = product[0].name;
+            }
+          }
+        }
       }
 
-      // Send emails
-      const customerEmail = customer?.email || metadata?.email || '';
-      if (customerEmail) {
+      // Send confirmation email
+      if (order.customerEmail) {
         sendOrderConfirmationEmail({
-          to: customerEmail,
-          name: metadata?.name || customer?.first_name || 'Customer',
-          orderId: orderId.slice(0, 8),
-          items: validItems.map((item: any) => ({
+          to: order.customerEmail,
+          name: order.customerName || 'Customer',
+          orderId: order.id.slice(0, 8),
+          items: items.map((item) => ({
             name: item.productName || 'Shoe',
-            size: item.variantSize || item.resolvedVariant.size || '-',
-            color: item.variantColor || item.resolvedVariant.color || '-',
+            size: item.variantSize,
+            color: item.variantColor,
             quantity: item.quantity,
-            price: item.unitPrice || 0,
+            price: item.unitPrice,
           })),
-          subtotal: metadata?.subtotal || amount,
-          deliveryFee: metadata?.deliveryFee || 0,
-          total: amount,
-          deliveryType: metadata?.deliveryType || 'boda',
+          subtotal: order.subtotal,
+          deliveryFee: order.deliveryFee,
+          total: order.total,
+          deliveryType: order.deliveryType,
           paymentMethod: 'paystack',
-          address: metadata?.address || 'Not specified',
+          address: order.shippingAddress || 'Not specified',
         }).catch(console.error);
       }
 
+      // Admin notification
       sendAdminNewOrderEmail({
-        orderId: orderId.slice(0, 8),
-        customerName: metadata?.name || customer?.first_name || 'Customer',
-        customerPhone: metadata?.phone || 'Not provided',
-        customerEmail: customerEmail || 'Not provided',
-        total: amount,
+        orderId: order.id.slice(0, 8),
+        customerName: order.customerName || 'Customer',
+        customerPhone: order.customerPhone || 'Not provided',
+        customerEmail: order.customerEmail || 'Not provided',
+        total: order.total,
         paymentMethod: 'paystack',
-        itemsCount: validItems.length,
+        itemsCount: items.length,
       }).catch(console.error);
     }
 

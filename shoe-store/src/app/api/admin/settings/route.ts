@@ -5,31 +5,36 @@ import { eq } from 'drizzle-orm';
 
 export async function GET() {
   try {
-    const result = await db.select().from(settings).where(eq(settings.key, 'theme')).limit(1);
-    return NextResponse.json({ theme: result.length > 0 ? result[0].value : 'default' });
+    const allSettings = await db.select().from(settings);
+    const map: Record<string, string> = {};
+    for (const s of allSettings) map[s.key] = s.value;
+    return NextResponse.json({
+      theme: map.theme || 'default',
+      'theme-mode': map['theme-mode'] || 'auto',
+    });
   } catch (error) {
-    console.error('Error reading theme:', error);
-    return NextResponse.json({ theme: 'default' });
+    console.error('Error reading settings:', error);
+    return NextResponse.json({ theme: 'default', 'theme-mode': 'auto' });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const { theme } = await request.json();
-    if (!theme || typeof theme !== 'string') {
-      return NextResponse.json({ error: 'Invalid theme' }, { status: 400 });
+    const { key, value } = await request.json();
+    if (!key || typeof key !== 'string' || !value || typeof value !== 'string') {
+      return NextResponse.json({ error: 'Invalid key or value' }, { status: 400 });
     }
 
-    const existing = await db.select().from(settings).where(eq(settings.key, 'theme')).limit(1);
+    const existing = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
     if (existing.length > 0) {
-      await db.update(settings).set({ value: theme, updatedAt: new Date() }).where(eq(settings.key, 'theme'));
+      await db.update(settings).set({ value, updatedAt: new Date() }).where(eq(settings.key, key));
     } else {
-      await db.insert(settings).values({ key: 'theme', value: theme });
+      await db.insert(settings).values({ key, value });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error saving theme:', error);
-    return NextResponse.json({ error: 'Failed to save theme' }, { status: 500 });
+    console.error('Error saving setting:', error);
+    return NextResponse.json({ error: 'Failed to save setting' }, { status: 500 });
   }
 }

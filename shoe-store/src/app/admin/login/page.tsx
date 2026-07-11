@@ -2,8 +2,10 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Lock } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
@@ -40,19 +42,36 @@ function LoginForm() {
   }
 
   return (
-    <div className="max-w-sm w-full space-y-6 animate-fade-in">
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="max-w-sm w-full space-y-6"
+    >
       <div className="text-center">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.2 }}
+          className="w-16 h-16 bg-primary-100 rounded-full mx-auto mb-4 flex items-center justify-center"
+        >
+          <Lock className="text-primary-600" size={28} />
+        </motion.div>
         <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
         <p className="text-sm text-gray-500 mt-1">Enter the admin password to continue</p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border p-6 space-y-4 shadow-sm">
         <Input
           type="password"
           label="Password"
@@ -66,7 +85,7 @@ function LoginForm() {
           Sign In
         </Button>
       </form>
-    </div>
+    </motion.div>
   );
 }
 

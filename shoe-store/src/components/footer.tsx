@@ -34,10 +34,10 @@ const quickLinks = [
 ];
 
 const supportLinks = [
-  { href: '#', label: 'Contact Us' },
-  { href: '#', label: 'Delivery Info' },
-  { href: '#', label: 'Returns' },
-  { href: '#', label: 'FAQ' },
+  { href: '/contact', label: 'Contact Us' },
+  { href: '/delivery-info', label: 'Delivery Info' },
+  { href: '/returns', label: 'Returns' },
+  { href: '/faq', label: 'FAQ' },
 ];
 
 export function Footer() {

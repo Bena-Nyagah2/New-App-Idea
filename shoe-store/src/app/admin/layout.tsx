@@ -1,10 +1,24 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+
+const NAV_ITEMS = [
+  { href: '/admin/orders', label: 'Orders' },
+  { href: '/admin/inventory', label: 'Inventory' },
+  { href: '/admin/suppliers', label: 'Suppliers' },
+  { href: '/admin/payouts', label: 'Payouts' },
+  { href: '/admin/theme', label: 'Theme' },
+];
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin Nav */}
@@ -13,23 +27,29 @@ export default function AdminLayout({
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-6">
               <Link href="/admin" className="font-bold text-gray-900 font-mono text-sm">
-                🛒 Admin
+                Admin
               </Link>
-              <Link href="/admin/orders" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                Orders
-              </Link>
-              <Link href="/admin/inventory" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                Inventory
-              </Link>
-              <Link href="/admin/suppliers" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                Suppliers
-              </Link>
-              <Link href="/admin/payouts" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                Payouts
-              </Link>
-              <Link href="/admin/theme" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
-                Theme
-              </Link>
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative text-sm font-medium transition-colors ${
+                      isActive ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'
+                    }`}
+                  >
+                    {item.label}
+                    {isActive && (
+                      <motion.div
+                        layoutId="admin-nav-indicator"
+                        className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary-600"
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
             <div className="flex items-center gap-4">
               <Link href="/" className="text-sm text-gray-500 hover:text-primary-600 transition-colors">

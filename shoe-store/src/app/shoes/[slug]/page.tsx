@@ -100,7 +100,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                   {images.slice(1, 5).map((img, i) => (
                     <div key={i} className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 hover:border-primary-500 cursor-pointer transition-colors">
-                      <img src={img} alt={`${product.name} view ${i + 2}`} className="w-full h-full object-cover" />
+                      <img src={img} alt={`${product.name} view ${i + 2}`} className="w-full h-full object-cover" loading="lazy" />
                     </div>
                   ))}
                 </div>
@@ -119,9 +119,26 @@ export default async function ProductPage({ params }: PageProps) {
             <div className="flex items-center gap-2 mb-2">
               <span className="text-sm font-medium text-primary-600 uppercase tracking-wide">{product.brand}</span>
               <span className="text-sm text-gray-500 capitalize">· {product.category}</span>
+              {product.onSale && product.salePrice && (
+                <span className="inline-flex items-center gap-1 bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                  SALE
+                </span>
+              )}
             </div>
             <h1 className="heading-2">{product.name}</h1>
-            <p className="text-3xl font-bold text-gray-900 mt-2">{formatPrice(product.basePrice)}</p>
+            <div className="flex items-center gap-3 mt-2">
+              {product.onSale && product.salePrice ? (
+                <>
+                  <p className="text-3xl font-bold text-red-600">{formatPrice(product.salePrice)}</p>
+                  <p className="text-xl text-gray-400 line-through">{formatPrice(product.basePrice)}</p>
+                  <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
+                    {Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}% OFF
+                  </span>
+                </>
+              ) : (
+                <p className="text-3xl font-bold text-gray-900">{formatPrice(product.basePrice)}</p>
+              )}
+            </div>
           </div>
 
           {/* Stock Status */}

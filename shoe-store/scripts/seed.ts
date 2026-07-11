@@ -9,9 +9,11 @@ const SEED_PRODUCTS = [
     category: 'lifestyle',
     description: 'Classic Nike Air Max 90 sneakers with visible Air cushioning. Perfect for everyday wear.',
     basePrice: 350000, // KES 3,500
+    onSale: true,
+    salePrice: 280000, // KES 2,800
     images: [
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/sheep',
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/breakfast',
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=800&h=800&fit=crop',
     ],
     variants: [
       { size: '40', color: 'Black', stock: 3, costPrice: 300000 },
@@ -30,7 +32,8 @@ const SEED_PRODUCTS = [
     description: 'Adidas Ultraboost 23 running shoes with responsive Boost cushioning.',
     basePrice: 450000, // KES 4,500
     images: [
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/beach',
+      'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&h=800&fit=crop',
     ],
     variants: [
       { size: '40', color: 'Core Black', stock: 2, costPrice: 380000 },
@@ -46,8 +49,11 @@ const SEED_PRODUCTS = [
     category: 'basketball',
     description: 'Air Jordan 1 Mid basketball shoes. Iconic style with modern comfort.',
     basePrice: 520000,
+    onSale: true,
+    salePrice: 420000, // KES 4,200
     images: [
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/balloons',
+      'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&h=800&fit=crop',
     ],
     variants: [
       { size: '41', color: 'Red/Black', stock: 1, costPrice: 450000 },
@@ -64,7 +70,10 @@ const SEED_PRODUCTS = [
     category: 'lifestyle',
     description: 'New Balance 574 classic. Timeless design with premium suede & mesh.',
     basePrice: 320000,
-    images: [],
+    images: [
+      'https://images.unsplash.com/photo-1539185441755-769473a23570?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&h=800&fit=crop',
+    ],
     variants: [
       { size: '40', color: 'Grey', stock: 3, costPrice: 260000 },
       { size: '41', color: 'Grey', stock: 4, costPrice: 260000 },
@@ -81,7 +90,8 @@ const SEED_PRODUCTS = [
     description: 'Puma Suede Classic sneakers. Retro style since 1968.',
     basePrice: 250000,
     images: [
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/deer',
+      'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800&h=800&fit=crop',
     ],
     variants: [
       { size: '39', color: 'Black', stock: 2, costPrice: 200000 },
@@ -98,7 +108,10 @@ const SEED_PRODUCTS = [
     category: 'running',
     description: 'Nike Revolution 6 running shoes. Breathable mesh, cushioned comfort.',
     basePrice: 280000,
-    images: [],
+    images: [
+      'https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=800&h=800&fit=crop',
+    ],
     variants: [
       { size: '41', color: 'Grey', stock: 3, costPrice: 220000 },
       { size: '42', color: 'Grey', stock: 5, costPrice: 220000 },
@@ -112,7 +125,10 @@ const SEED_PRODUCTS = [
     category: 'lifestyle',
     description: 'Vans Old Skool classic skate shoes. Iconic side stripe design.',
     basePrice: 220000,
-    images: [],
+    images: [
+      'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=800&fit=crop',
+    ],
     variants: [
       { size: '39', color: 'Black/White', stock: 4, costPrice: 180000 },
       { size: '40', color: 'Black/White', stock: 5, costPrice: 180000 },
@@ -128,7 +144,8 @@ const SEED_PRODUCTS = [
     description: 'Converse Chuck Taylor All Star high tops. Timeless canvas sneakers.',
     basePrice: 200000,
     images: [
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/buildings',
+      'https://images.unsplash.com/photo-1463100099107-aa0980c362e6?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1470468969717-61d5d54fd036?w=800&h=800&fit=crop',
     ],
     variants: [
       { size: '39', color: 'White', stock: 3, costPrice: 160000 },
@@ -145,7 +162,10 @@ const SEED_PRODUCTS = [
     category: 'lifestyle',
     description: 'Adidas Forum Low basketball-inspired sneakers. 80s design, modern comfort.',
     basePrice: 320000,
-    images: [],
+    images: [
+      'https://images.unsplash.com/photo-1584735175315-9d5df23860e6?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=800&h=800&fit=crop',
+    ],
     variants: [
       { size: '41', color: 'White/Blue', stock: 2, costPrice: 270000 },
       { size: '42', color: 'White/Blue', stock: 3, costPrice: 270000 },
@@ -160,7 +180,10 @@ const SEED_PRODUCTS = [
     category: 'training',
     description: 'Skechers Go Walk 6 walking shoes with Ultra Go cushioning.',
     basePrice: 240000,
-    images: [],
+    images: [
+      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=800&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&h=800&fit=crop&q=80',
+    ],
     variants: [
       { size: '40', color: 'Grey', stock: 3, costPrice: 190000 },
       { size: '41', color: 'Grey', stock: 4, costPrice: 190000 },

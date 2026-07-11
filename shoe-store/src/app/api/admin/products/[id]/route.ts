@@ -10,6 +10,8 @@ const updateProductSchema = z.object({
   category: z.string().min(1).optional(),
   description: z.string().optional(),
   basePrice: z.number().positive().optional(),
+  onSale: z.boolean().optional(),
+  salePrice: z.number().nullable().optional(),
   images: z.array(z.string()).optional(),
   isActive: z.boolean().optional(),
   variants: z.array(z.object({
@@ -54,6 +56,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       ...(data.category !== undefined && { category: data.category }),
       ...(data.description !== undefined && { description: data.description }),
       ...(data.basePrice !== undefined && { basePrice: data.basePrice }),
+      ...(data.onSale !== undefined && { onSale: data.onSale }),
+      ...(data.salePrice !== undefined && { salePrice: data.salePrice }),
       ...(data.images !== undefined && { images: JSON.stringify(data.images) }),
       ...(data.isActive !== undefined && { isActive: data.isActive }),
       updatedAt: new Date(),

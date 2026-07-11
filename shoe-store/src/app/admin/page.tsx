@@ -3,6 +3,7 @@ import { orders, products, variants } from '@/lib/db/schema';
 import { eq, sql, count, sum } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
+import { AnimatedCard, StaggerContainer, StaggerItem } from '@/components/admin/animated';
 export const dynamic = 'force-dynamic';
 
 async function getStats() {
@@ -64,39 +65,49 @@ export default async function AdminDashboardPage() {
   ]);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="space-y-8">
+      <AnimatedCard>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+      </AnimatedCard>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Orders Today"
-          value={stats.ordersToday.toString()}
-          icon="🛒"
-          color="bg-blue-100 text-blue-700"
-        />
-        <StatCard
-          title="Revenue Today"
-          value={formatPrice(Number(stats.revenueToday ?? 0))}
-          icon="💰"
-          color="bg-green-100 text-green-700"
-        />
-        <StatCard
-          title="Active Products"
-          value={stats.totalProducts.toString()}
-          icon="👟"
-          color="bg-purple-100 text-purple-700"
-        />
-        <StatCard
-          title="Pending Orders"
-          value={stats.pendingOrders.toString()}
-          icon="📦"
-          color="bg-yellow-100 text-yellow-700"
-        />
-      </div>
+      <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StaggerItem>
+          <StatCard
+            title="Orders Today"
+            value={stats.ordersToday.toString()}
+            icon="🛒"
+            color="text-blue-600"
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard
+            title="Revenue Today"
+            value={formatPrice(Number(stats.revenueToday ?? 0))}
+            icon="💰"
+            color="text-green-600"
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard
+            title="Active Products"
+            value={stats.totalProducts.toString()}
+            icon="👟"
+            color="text-purple-600"
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard
+            title="Pending Orders"
+            value={stats.pendingOrders.toString()}
+            icon="📦"
+            color="text-yellow-600"
+          />
+        </StaggerItem>
+      </StaggerContainer>
 
       {/* Recent Orders */}
-      <div>
+      <AnimatedCard delay={0.3}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Recent Orders</h2>
           <Link href="/admin/orders" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
@@ -117,8 +128,8 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {recentOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
+                {recentOrders.map((order, index) => (
+                  <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3">
                       <Link href={`/admin/orders/${order.id}`} className="text-primary-600 font-medium hover:underline">
                         #{order.id.slice(0, 8)}
@@ -135,7 +146,7 @@ export default async function AdminDashboardPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                        order.paymentStatus === 'paid' 
+                        order.paymentStatus === 'paid'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-yellow-100 text-yellow-700'
                       }`}>
@@ -155,7 +166,7 @@ export default async function AdminDashboardPage() {
             No orders yet
           </div>
         )}
-      </div>
+      </AnimatedCard>
     </div>
   );
 }
@@ -167,12 +178,12 @@ function StatCard({ title, value, icon, color }: {
   color: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border p-5">
+    <div className="bg-white rounded-xl border p-5 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-3 mb-2">
-        <span className={`text-2xl`}>{icon}</span>
+        <span className="text-2xl">{icon}</span>
         <span className="text-sm text-gray-500 font-medium">{title}</span>
       </div>
-      <p className={`text-2xl font-bold ${color.split(' ')[1]}`}>{value}</p>
+      <p className={`text-2xl font-bold ${color}`}>{value}</p>
     </div>
   );
 }

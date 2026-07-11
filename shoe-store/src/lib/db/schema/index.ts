@@ -9,6 +9,8 @@ export const products = sqliteTable('products', {
   category: text('category').notNull(), // running, lifestyle, basketball, etc.
   description: text('description'),
   basePrice: integer('base_price').notNull(), // in cents (KES)
+  salePrice: integer('sale_price'), // discounted price in cents (nullable)
+  onSale: integer('on_sale', { mode: 'boolean' }).default(false).notNull(),
   images: text('images').notNull(), // JSON array of Cloudinary URLs
   isActive: integer('is_active', { mode: 'boolean' }).default(true).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(new Date()).notNull(),

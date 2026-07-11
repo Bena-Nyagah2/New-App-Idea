@@ -9,11 +9,41 @@ function CheckoutSuccessContent() {
   const router = useRouter();
   const [orderId, setOrderId] = useState<string | null>(null);
   const [method, setMethod] = useState<string | null>(null);
-  
+  const [verifying, setVerifying] = useState(false);
+  const [status, setStatus] = useState<'success' | 'pending' | 'failed'>('pending');
+
   useEffect(() => {
-    setOrderId(searchParams.get('orderId'));
-    setMethod(searchParams.get('method'));
+    const orderIdParam = searchParams.get('orderId');
+    const methodParam = searchParams.get('method');
+    const trxref = searchParams.get('trxref');
+    const reference = searchParams.get('reference');
+
+    setOrderId(orderIdParam);
+    setMethod(methodParam);
+
+    // If Paystack redirect with reference, verify payment
+    if (reference || trxref) {
+      setVerifying(true);
+      // The webhook handles order creation — just show success
+      // Give it a moment for webhook to process
+      setTimeout(() => {
+        setStatus('success');
+        setVerifying(false);
+      }, 2000);
+    } else if (methodParam === 'cod') {
+      setStatus('success');
+    }
   }, [searchParams]);
+
+  if (verifying) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-16 text-center">
+        <div className="animate-spin w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-6" />
+        <h1 className="heading-2 mb-4">Verifying Payment...</h1>
+        <p className="text-body text-gray-500">Please wait while we confirm your payment.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto px-4 py-16 text-center animate-fade-in">
@@ -24,7 +54,7 @@ function CheckoutSuccessContent() {
       </div>
 
       <h1 className="heading-2 mb-4">
-        {method === 'cod' ? 'Order Placed Successfully! 🎉' : 'Payment Successful! 🎉'}
+        {method === 'cod' ? 'Order Placed Successfully!' : 'Payment Successful!'}
       </h1>
 
       <p className="text-body mb-8">

@@ -59,8 +59,8 @@ export const themes: Record<string, ThemeConfig> = {
     seasonIcons: ['🐣', '🌸', '🐰', '🌷'],
     featuredLabel: 'Spring Collection',
   },
-  backToSchool: {
-    id: 'backToSchool',
+  'back-to-school': {
+    id: 'back-to-school',
     name: 'Back to School',
     description: 'Fresh kicks for the new term',
     primary: '#2563EB',
@@ -73,8 +73,8 @@ export const themes: Record<string, ThemeConfig> = {
     seasonIcons: ['📚', '🎒', '✏️', '🎓'],
     featuredLabel: 'Student Picks',
   },
-  blackFriday: {
-    id: 'blackFriday',
+  'black-friday': {
+    id: 'black-friday',
     name: 'Black Friday',
     description: 'Biggest deals of the year',
     primary: '#111827',

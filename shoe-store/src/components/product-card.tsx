@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { Eye, ArrowRight } from 'lucide-react';
+import { Eye, ArrowRight, Tag } from 'lucide-react';
 
 interface ProductCardProps {
   product: {
@@ -14,6 +14,8 @@ interface ProductCardProps {
     brand: string;
     category: string;
     basePrice: number;
+    salePrice?: number | null;
+    onSale?: boolean;
     images: string[];
     slug: string;
   };
@@ -26,9 +28,13 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, variant }: ProductCardProps) {
-  const imageUrl = product.images?.[0] || '/placeholder.jpg';
+  const imageUrl = product.images?.[0] || '/placeholder.svg';
   const inStock = variant ? variant.stock > 0 : true;
   const isLowStock = inStock && variant && variant.stock <= 3;
+  const isOnSale = product.onSale && product.salePrice && product.salePrice < product.basePrice;
+  const discountPercent = isOnSale
+    ? Math.round(((product.basePrice - product.salePrice!) / product.basePrice) * 100)
+    : 0;
 
   return (
     <motion.article
@@ -54,6 +60,20 @@ export function ProductCard({ product, variant }: ProductCardProps) {
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           </motion.div>
+
+          {/* Sale badge */}
+          {isOnSale && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute top-3 left-3 z-10"
+            >
+              <span className="inline-flex items-center gap-1 bg-red-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg">
+                <Tag size={10} />
+                {discountPercent}% OFF
+              </span>
+            </motion.div>
+          )}
 
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
@@ -103,9 +123,22 @@ export function ProductCard({ product, variant }: ProductCardProps) {
           </h3>
 
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-gray-900">
-              {formatPrice(product.basePrice)}
-            </span>
+            <div className="flex items-center gap-2">
+              {isOnSale ? (
+                <>
+                  <span className="text-lg font-bold text-red-600">
+                    {formatPrice(product.salePrice!)}
+                  </span>
+                  <span className="text-sm text-gray-400 line-through">
+                    {formatPrice(product.basePrice)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-lg font-bold text-gray-900">
+                  {formatPrice(product.basePrice)}
+                </span>
+              )}
+            </div>
             {variant && (
               <span
                 className={cn(

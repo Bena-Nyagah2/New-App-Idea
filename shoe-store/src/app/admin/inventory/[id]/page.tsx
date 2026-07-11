@@ -33,6 +33,8 @@ export default function EditProductPage() {
     category: '',
     description: '',
     basePrice: '',
+    onSale: false,
+    salePrice: '',
     images: '',
     isActive: true,
   });
@@ -51,6 +53,8 @@ export default function EditProductPage() {
           category: p.category || '',
           description: p.description || '',
           basePrice: String((p.basePrice || 0) / 100),
+          onSale: p.onSale ?? false,
+          salePrice: p.salePrice ? String(p.salePrice / 100) : '',
           images: (JSON.parse(p.images || '[]')).join(', '),
           isActive: p.isActive ?? true,
         });
@@ -104,6 +108,8 @@ export default function EditProductPage() {
           category: form.category,
           description: form.description,
           basePrice: parseInt(form.basePrice) * 100,
+          onSale: form.onSale,
+          salePrice: form.onSale ? parseInt(form.salePrice) * 100 : null,
           images: form.images.split(',').map(s => s.trim()).filter(Boolean),
           isActive: form.isActive,
           variants: variants.filter(v => v.size && v.color).map(v => ({
@@ -181,6 +187,29 @@ export default function EditProductPage() {
           value={form.basePrice}
           onChange={e => setForm({ ...form, basePrice: e.target.value })}
         />
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
+              <input
+                type="checkbox"
+                checked={form.onSale}
+                onChange={e => setForm({ ...form, onSale: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              Put on sale
+            </label>
+          </div>
+          {form.onSale && (
+            <Input
+              label="Sale Price (KES)"
+              type="number"
+              placeholder="2500"
+              value={form.salePrice}
+              onChange={e => setForm({ ...form, salePrice: e.target.value })}
+            />
+          )}
+        </div>
 
         <Textarea
           label="Description"
