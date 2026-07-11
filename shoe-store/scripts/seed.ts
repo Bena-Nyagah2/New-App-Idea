@@ -1,4 +1,4 @@
-import { db } from '@/lib/db';
+import { db, client } from '@/lib/db';
 import { products, variants, suppliers } from '@/lib/db/schema';
 import { slugify, generateSKU } from '@/lib/utils';
 
@@ -227,13 +227,16 @@ const SEED_SUPPLIERS = [
 async function seed() {
   console.log('🌱 Seeding database...\n');
 
-  // Is database already seeded?
-  const existing = await db.select({ id: products.id }).from(products).limit(1);
-  if (existing.length > 0) {
-    console.log('⚠️  Products already exist. Skipping seed.');
-    console.log('   Use pnpm db:push --force to reset, then seed again.');
-    process.exit(0);
-  }
+  // Clear existing data for a clean seed
+  console.log('🗑️  Clearing existing data...');
+  await client.execute('DELETE FROM order_items');
+  await client.execute('DELETE FROM orders');
+  await client.execute('DELETE FROM payout_items');
+  await client.execute('DELETE FROM payouts');
+  await client.execute('DELETE FROM supplier_products');
+  await client.execute('DELETE FROM variants');
+  await client.execute('DELETE FROM products');
+  await client.execute('DELETE FROM suppliers');
 
   // Seed suppliers
   console.log('📦 Adding suppliers...');

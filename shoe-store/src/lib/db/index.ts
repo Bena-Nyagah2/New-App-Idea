@@ -23,5 +23,5 @@ if (process.env.NODE_ENV !== 'production') {
   globalForDb.db = db;
 }
 
-export { db };
+export { db, client };
 export type { schema };
