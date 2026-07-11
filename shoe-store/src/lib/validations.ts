@@ -12,6 +12,7 @@ export const cartItemSchema = z.object({
   unitPrice: z.number(), // in cents
   costPrice: z.number().optional(),
   quantity: z.number().min(1).max(10),
+  maxStock: z.number().optional(), // Track available stock client-side
 });
 
 export type CartItem = z.infer<typeof cartItemSchema>;

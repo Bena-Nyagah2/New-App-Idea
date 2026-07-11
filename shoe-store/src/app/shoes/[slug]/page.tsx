@@ -4,7 +4,7 @@ import { products, variants } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import { AddToCartForm } from './add-to-cart-form';
-import Image from 'next/image';
+import { ProductImageTilt } from './product-image-tilt';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProductCard } from '@/components/product-card';
@@ -91,28 +91,16 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="space-y-4">
           {images.length > 0 ? (
             <>
-              <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-50">
-                <Image
-                  src={images[0]}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                {!inStock && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="bg-red-600 text-white px-4 py-2 rounded-full text-lg font-medium">
-                      Out of Stock
-                    </span>
-                  </div>
-                )}
-              </div>
+              <ProductImageTilt
+                src={images[0]}
+                alt={product.name}
+                inStock={inStock}
+              />
               {images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                   {images.slice(1, 5).map((img, i) => (
                     <div key={i} className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 hover:border-primary-500 cursor-pointer transition-colors">
-                      <Image src={img} alt={`${product.name} view ${i + 2}`} fill className="object-cover" sizes="80px" />
+                      <img src={img} alt={`${product.name} view ${i + 2}`} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

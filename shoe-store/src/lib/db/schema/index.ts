@@ -132,6 +132,13 @@ export const payoutItems = sqliteTable('payout_items', {
   amount: integer('amount').notNull(),
 });
 
+// Store settings (key-value)
+export const settings = sqliteTable('settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(new Date()).notNull(),
+});
+
 // Relations
 export const productsRelations = relations(products, ({ many }) => ({
   variants: many(variants),

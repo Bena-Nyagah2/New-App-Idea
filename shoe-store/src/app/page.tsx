@@ -3,10 +3,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import { ProductCard } from '@/components/product-card';
-import { Button } from '@/components/ui/button';
+import { HomeHeroSection } from './hero-section';
+import { TrustIndicators } from './trust-indicators';
+import { CategoryCard } from './category-card';
+import { getBrandLogo } from '@/lib/brands';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -44,63 +47,22 @@ export default async function HomePage() {
     getBrands(),
   ]);
 
+  const heroProduct = featuredProducts[0];
+  const heroImages = heroProduct ? JSON.parse(heroProduct.images || '[]') : [];
+  const heroImage = heroImages[0] || '/placeholder-shoe.png';
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <div className="max-w-3xl animate-fade-in">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-balance">
-              Step Into Style
-            </h1>
-            <p className="text-lg sm:text-xl text-primary-100 mb-8 max-w-2xl">
-              Discover premium running, lifestyle & basketball shoes. Fast Nairobi delivery via Uber Boda. Pay online or cash on delivery.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/shoes" className="btn btn-primary text-lg px-8 py-3">
-                Shop Now
-              </Link>
-              <Link href="/shoes?category=running" className="btn bg-white/10 text-white hover:bg-white/20 border-2 border-white/30 text-lg px-8 py-3">
-                Running Shoes
-              </Link>
-            </div>
-          </div>
-        </div>
-        
-        {/* Floating shoes decoration */}
-        <div className="absolute bottom-0 right-0 w-full h-64 bg-gradient-to-t from-primary-900 to-transparent" />
-      </section>
+      <HomeHeroSection
+        productName={heroProduct?.name || 'Premium Sneakers'}
+        productBrand={heroProduct?.brand || 'Top Brands'}
+        productPrice={heroProduct ? formatPrice(heroProduct.basePrice) : 'KES 3,500'}
+        productImage={heroImage}
+      />
 
       {/* Trust Indicators */}
-      <section className="py-12 bg-white border-y border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-center gap-8 text-center">
-          <div className="flex items-center gap-2 text-gray-600">
-            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-            <span>Fast Nairobi Delivery</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-            <span>Secure Payments</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-            <span>Quality Guaranteed</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span>Cash on Delivery</span>
-          </div>
-        </div>
-      </section>
+      <TrustIndicators />
 
       {/* Featured Products */}
       <section className="section">
@@ -110,11 +72,11 @@ export default async function HomePage() {
               <h2 className="heading-2">Featured Shoes</h2>
               <p className="text-body mt-1">Handpicked styles just for you</p>
             </div>
-            <Link href="/shoes" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link href="/shoes" className="text-primary-600 hover:text-primary-700 font-semibold transition-colors">
               View All →
             </Link>
           </div>
-          
+
           {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
@@ -147,23 +109,12 @@ export default async function HomePage() {
           <h2 className="heading-2 text-center mb-10">Shop by Category</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { name: 'Running', slug: 'running', icon: '🏃', color: 'bg-blue-500' },
-              { name: 'Lifestyle', slug: 'lifestyle', icon: '👟', color: 'bg-purple-500' },
-              { name: 'Basketball', slug: 'basketball', icon: '🏀', color: 'bg-orange-500' },
-              { name: 'Training', slug: 'training', icon: '💪', color: 'bg-green-500' },
+              { slug: 'running', name: 'Running' },
+              { slug: 'lifestyle', name: 'Lifestyle' },
+              { slug: 'basketball', name: 'Basketball' },
+              { slug: 'training', name: 'Training' },
             ].map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/shoes?category=${cat.slug}`}
-                className="group relative aspect-square rounded-xl overflow-hidden"
-              >
-                <div className={`absolute inset-0 ${cat.color} opacity-90 group-hover:opacity-100 transition-opacity`} />
-                <div className="relative p-6 flex flex-col items-center justify-center text-white">
-                  <span className="text-4xl mb-2">{cat.icon}</span>
-                  <h3 className="text-xl font-bold">{cat.name}</h3>
-                  <p className="text-sm opacity-80">Shop {cat.name.toLowerCase()} shoes</p>
-                </div>
-              </Link>
+              <CategoryCard key={cat.slug} slug={cat.slug} name={cat.name} />
             ))}
           </div>
         </div>
@@ -174,16 +125,31 @@ export default async function HomePage() {
         <section className="section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="heading-2 text-center mb-10">Popular Brands</h2>
-            <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-              {brands.map((brand) => (
-                <Link
-                  key={brand.brand}
-                  href={`/shoes?brand=${encodeURIComponent(brand.brand)}`}
-                  className="px-6 py-3 bg-white border border-gray-200 rounded-lg font-medium text-gray-700 hover:border-primary-500 hover:text-primary-600 transition-colors"
-                >
-                  {brand.brand}
-                </Link>
-              ))}
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+              {brands.map((brand) => {
+                const brandConfig = getBrandLogo(brand.brand);
+                return (
+                  <Link
+                    key={brand.brand}
+                    href={`/shoes?brand=${encodeURIComponent(brand.brand)}`}
+                    className="group flex items-center justify-center bg-white border border-gray-200 rounded-xl hover:border-primary-400 hover:shadow-md transition-all duration-200 px-5 py-3 min-w-[120px]"
+                  >
+                    {brandConfig ? (
+                      <Image
+                        src={brandConfig.logo}
+                        alt={`${brand.brand} logo`}
+                        width={90}
+                        height={30}
+                        className="opacity-60 group-hover:opacity-100 transition-opacity duration-200"
+                      />
+                    ) : (
+                      <span className="font-semibold text-gray-600 group-hover:text-primary-600 transition-colors">
+                        {brand.brand}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -194,7 +160,7 @@ export default async function HomePage() {
         <div className="max-w-3xl mx-auto px-4 text-center text-white">
           <h2 className="heading-2 mb-4">Ready to Find Your Perfect Pair?</h2>
           <p className="text-primary-100 mb-8">Join thousands of happy customers in Nairobi. Free delivery on orders over KES 7,000.</p>
-          <Link href="/shoes" className="btn bg-white text-primary-600 hover:bg-primary-50 text-lg px-8 py-3">
+          <Link href="/shoes" className="btn bg-white text-primary-600 hover:bg-primary-50 text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
             Start Shopping
           </Link>
         </div>

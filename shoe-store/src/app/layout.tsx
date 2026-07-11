@@ -1,11 +1,25 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Fredoka, Nunito } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Providers } from './providers';
+import { ThemeProvider } from '@/components/theme-provider';
+import { DiscountBanner } from '@/components/discount-banner';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const fredoka = Fredoka({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-heading',
+  display: 'swap',
+});
+
+const nunito = Nunito({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Shoe Store | Quality Shoes in Nairobi',
@@ -55,16 +69,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en-KE" className={`${inter.variable} antialiased`}>
+    <html lang="en-KE" className={`${fredoka.variable} ${nunito.variable} antialiased`}>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://api.paystack.co" />
       </head>
-      <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+      <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900 font-[var(--font-body)]">
         <Providers>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <ThemeProvider>
+            <DiscountBanner />
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

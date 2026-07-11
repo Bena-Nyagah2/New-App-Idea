@@ -27,6 +27,9 @@ export default function AdminLayout({
               <Link href="/admin/payouts" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
                 Payouts
               </Link>
+              <Link href="/admin/theme" className="text-sm text-gray-600 hover:text-primary-600 transition-colors">
+                Theme
+              </Link>
             </div>
             <div className="flex items-center gap-4">
               <Link href="/" className="text-sm text-gray-500 hover:text-primary-600 transition-colors">

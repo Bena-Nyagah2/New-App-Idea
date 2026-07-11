@@ -3,6 +3,7 @@ import { products, variants } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
+import { ProductActions } from './product-actions';
 export const dynamic = 'force-dynamic';
 
 async function getProducts() {
@@ -40,7 +41,7 @@ export default async function InventoryPage() {
             const images = JSON.parse(product.images || '[]');
             
             return (
-              <div key={product.id} className="bg-white rounded-xl border overflow-hidden">
+              <div key={product.id} className="bg-white rounded-2xl border overflow-hidden card-3d">
                 <div className="flex items-start gap-4 p-4">
                   {/* Image */}
                   <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0">
@@ -69,9 +70,7 @@ export default async function InventoryPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
-                      Edit
-                    </button>
+                    <ProductActions productId={product.id} />
                   </div>
                 </div>
                 

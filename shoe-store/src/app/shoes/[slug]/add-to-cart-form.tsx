@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useCartStore } from '@/lib/cart-store';
-import { Button } from '@/components/ui/button';
-import { formatPrice } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+import { formatPrice, cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, ShoppingCart } from 'lucide-react';
 
 interface AddToCartFormProps {
   product: {
@@ -32,14 +32,6 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
-  const availableSizesForColor = selectedColor
-    ? variants.filter(v => v.color === selectedColor && v.stock > 0).map(v => v.size)
-    : allSizes.filter(s => variants.some(v => v.size === s && v.stock > 0));
-
-  const availableColorsForSize = selectedSize
-    ? variants.filter(v => v.size === selectedSize && v.stock > 0).map(v => v.color)
-    : allColors.filter(c => variants.some(v => v.color === c && v.stock > 0));
-
   const selectedVariant = selectedColor && selectedSize
     ? variants.find(v => v.color === selectedColor && v.size === selectedSize)
     : null;
@@ -61,6 +53,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       unitPrice: product.basePrice,
       costPrice: 0,
       quantity: 1,
+      maxStock: selectedVariant.stock,
     });
 
     setAdded(true);
@@ -68,28 +61,28 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Colors */}
       {allColors.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Color: {selectedColor || 'Select'}
+          <label className="block text-sm font-semibold text-gray-700 mb-2.5 font-[var(--font-heading)]">
+            Color: <span className="text-primary-600">{selectedColor || 'Select'}</span>
           </label>
           <div className="flex flex-wrap gap-2">
             {allColors.map((color) => {
               const variant = variants.find(v => v.color === color);
               const hasStock = variants.some(v => v.color === color && v.stock > 0);
               const isSelected = selectedColor === color;
-              
+
               return (
-                <button
+                <motion.button
                   key={color}
                   onClick={() => {
                     setSelectedColor(isSelected ? null : color);
                     setSelectedSize(null);
                   }}
                   className={cn(
-                    'flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 text-sm font-medium transition-all',
+                    'flex items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-colors',
                     isSelected
                       ? 'border-primary-600 bg-primary-50 text-primary-700'
                       : hasStock
@@ -97,16 +90,21 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                       : 'border-gray-100 text-gray-400 cursor-not-allowed opacity-50'
                   )}
                   disabled={!hasStock}
+                  whileTap={hasStock ? { scale: 0.95 } : undefined}
+                  whileHover={hasStock ? { scale: 1.03 } : undefined}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                 >
                   {variant?.colorHex && (
-                    <span
-                      className="w-4 h-4 rounded-full border border-gray-200 flex-shrink-0"
+                    <motion.span
+                      className="w-5 h-5 rounded-full border-2 border-gray-200 flex-shrink-0"
                       style={{ backgroundColor: variant.colorHex }}
+                      animate={isSelected ? { scale: [1, 1.2, 1] } : {}}
+                      transition={{ duration: 0.3 }}
                     />
                   )}
                   {color}
-                  {!hasStock && <span className="text-xs">(sold out)</span>}
-                </button>
+                  {!hasStock && <span className="text-xs opacity-60">(sold out)</span>}
+                </motion.button>
               );
             })}
           </div>
@@ -116,8 +114,8 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       {/* Sizes */}
       {allSizes.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Size: {selectedSize || 'Select'}
+          <label className="block text-sm font-semibold text-gray-700 mb-2.5 font-[var(--font-heading)]">
+            Size: <span className="text-primary-600">{selectedSize || 'Select'}</span>
           </label>
           <div className="flex flex-wrap gap-2">
             {allSizes.map((size) => {
@@ -129,9 +127,9 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                 ? variants.find(v => v.color === selectedColor && v.size === size)
                 : undefined;
               const isLowStock = variant && variant.stock > 0 && variant.stock <= 3;
-              
+
               return (
-                <button
+                <motion.button
                   key={size}
                   onClick={() => {
                     if (isAvailable) {
@@ -139,7 +137,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                     }
                   }}
                   className={cn(
-                    'px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all min-w-[48px] relative',
+                    'px-4 py-2.5 rounded-xl border-2 text-sm font-bold transition-colors min-w-[52px] relative',
                     isSelected
                       ? 'border-primary-600 bg-primary-50 text-primary-700'
                       : isAvailable
@@ -147,15 +145,24 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                       : 'border-gray-100 text-gray-400 cursor-not-allowed opacity-50'
                   )}
                   disabled={!isAvailable}
+                  whileTap={isAvailable ? { scale: 0.9 } : undefined}
+                  whileHover={isAvailable ? { scale: 1.05 } : undefined}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                 >
                   {size}
                   {isLowStock && isAvailable && (
-                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] px-1 rounded-full font-medium">
+                    <motion.span
+                      className="absolute -top-2 -right-2 bg-secondary-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold"
+                      animate={{ scale: [1, 1.15, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
                       {variant?.stock}
-                    </span>
+                    </motion.span>
                   )}
-                  {!isAvailable && <span className="block text-[10px] mt-0.5">sold out</span>}
-                </button>
+                  {!isAvailable && (
+                    <span className="block text-[10px] mt-0.5 font-normal opacity-60">sold out</span>
+                  )}
+                </motion.button>
               );
             })}
           </div>
@@ -163,27 +170,71 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       )}
 
       {/* Selected State */}
-      {selectedColor && selectedSize && !selectedVariant?.stock && (
-        <p className="text-red-500 text-sm">This combination is sold out.</p>
-      )}
+      <AnimatePresence>
+        {selectedColor && selectedSize && !selectedVariant?.stock && (
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="text-secondary-600 text-sm font-semibold"
+          >
+            This combination is sold out.
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       {/* Add to Cart */}
-      <div className="flex gap-4 pt-4 border-t">
-        <Button
+      <div className="flex gap-4 pt-4 border-t border-gray-100">
+        <motion.button
           onClick={handleAddToCart}
           disabled={!canAdd}
-          size="lg"
-          className="flex-1"
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-base transition-all',
+            canAdd
+              ? added
+                ? 'bg-green-500 text-white'
+                : 'bg-primary-600 text-white hover:bg-primary-700 shadow-md hover:shadow-lg'
+              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          )}
+          whileTap={canAdd ? { scale: 0.95 } : undefined}
+          whileHover={canAdd ? { scale: 1.02 } : undefined}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
         >
-          {added ? 'Added ✓' : canAdd ? `Add to Cart – ${formatPrice(product.basePrice)}` : 'Select Size & Color'}
-        </Button>
-        
+          <AnimatePresence mode="wait">
+            {added ? (
+              <motion.span
+                key="added"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                className="flex items-center gap-2"
+              >
+                <Check size={18} />
+                Added to Cart!
+              </motion.span>
+            ) : (
+              <motion.span
+                key="add"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                className="flex items-center gap-2"
+              >
+                <ShoppingCart size={18} />
+                {canAdd ? `Add to Cart – ${formatPrice(product.basePrice)}` : 'Select Size & Color'}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </motion.button>
+
         {selectedColor && selectedSize && selectedVariant && selectedVariant.stock > 0 && (
-          <span className="text-sm text-green-600 self-center">
-            {selectedVariant.stock > 10 
-              ? 'In stock' 
-              : `${selectedVariant.stock} left`}
-          </span>
+          <motion.span
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-sm text-green-600 self-center font-semibold"
+          >
+            {selectedVariant.stock > 10 ? 'In stock' : `${selectedVariant.stock} left`}
+          </motion.span>
         )}
       </div>
     </div>

@@ -3,6 +3,8 @@ import { suppliers } from '@/lib/db/schema';
 import { desc } from 'drizzle-orm';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
+import { Phone, Mail, MapPin, CreditCard } from '@/components/icons';
+import { SupplierActions } from './supplier-actions';
 export const dynamic = 'force-dynamic';
 
 async function getSuppliers() {
@@ -28,9 +30,9 @@ export default async function SuppliersPage({ searchParams }: PageProps) {
       {suppliersList.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {suppliersList.map(supplier => (
-            <div key={supplier.id} className="bg-white rounded-xl border p-5">
+            <div key={supplier.id} className="bg-white rounded-2xl border p-5 card-3d">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-semibold">{supplier.name}</h3>
+                <h3 className="font-semibold font-[var(--font-heading)]">{supplier.name}</h3>
                 <span className={`badge ${supplier.isActive ? 'badge-success' : 'badge-danger'}`}>
                   {supplier.isActive ? 'Active' : 'Inactive'}
                 </span>
@@ -43,22 +45,26 @@ export default async function SuppliersPage({ searchParams }: PageProps) {
               <div className="mt-3 space-y-1 text-sm">
                 {supplier.phone && (
                   <div className="flex items-center gap-2 text-gray-500">
-                    <span>📞 {supplier.phone}</span>
+                    <Phone size={14} className="text-primary-500" />
+                    <span>{supplier.phone}</span>
                   </div>
                 )}
                 {supplier.email && (
                   <div className="flex items-center gap-2 text-gray-500">
-                    <span>✉️ {supplier.email}</span>
+                    <Mail size={14} className="text-primary-500" />
+                    <span>{supplier.email}</span>
                   </div>
                 )}
                 {supplier.location && (
                   <div className="flex items-center gap-2 text-gray-500">
-                    <span>📍 {supplier.location}</span>
+                    <MapPin size={14} className="text-primary-500" />
+                    <span>{supplier.location}</span>
                   </div>
                 )}
                 {supplier.paymentTerms && (
                   <div className="flex items-center gap-2 text-gray-500">
-                    <span>💳 {supplier.paymentTerms}</span>
+                    <CreditCard size={14} className="text-primary-500" />
+                    <span>{supplier.paymentTerms}</span>
                   </div>
                 )}
               </div>
@@ -67,10 +73,7 @@ export default async function SuppliersPage({ searchParams }: PageProps) {
                 <p className="mt-3 text-sm text-gray-400 italic">{supplier.notes}</p>
               )}
               
-              <div className="mt-4 pt-3 border-t flex gap-2">
-                <button className="text-xs text-primary-600 hover:text-primary-700 font-medium">Edit</button>
-                <button className="text-xs text-red-600 hover:text-red-700 font-medium">Deactivate</button>
-              </div>
+              <SupplierActions supplierId={supplier.id} isActive={supplier.isActive} />
             </div>
           ))}
         </div>
