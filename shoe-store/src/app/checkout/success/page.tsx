@@ -3,6 +3,41 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
+import confetti from 'canvas-confetti';
+
+function fireConfetti() {
+  const duration = 2500;
+  const end = Date.now() + duration;
+
+  const colors = ['#ed8914', '#E11D48', '#2563EB', '#22c55e', '#a855f7'];
+
+  (function frame() {
+    confetti({
+      particleCount: 3,
+      angle: 60,
+      spread: 65,
+      origin: { x: 0 },
+      colors,
+    });
+    confetti({
+      particleCount: 3,
+      angle: 120,
+      spread: 65,
+      origin: { x: 1 },
+      colors,
+    });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+
+  setTimeout(() => {
+    confetti({
+      particleCount: 80,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors,
+    });
+  }, 300);
+}
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
@@ -34,6 +69,12 @@ function CheckoutSuccessContent() {
       setStatus('success');
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (status === 'success') {
+      fireConfetti();
+    }
+  }, [status]);
 
   if (verifying) {
     return (

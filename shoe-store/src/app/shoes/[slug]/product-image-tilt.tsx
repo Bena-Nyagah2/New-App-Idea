@@ -11,9 +11,14 @@ interface ProductImageTiltProps {
   outOfStockLabel?: string;
 }
 
+const LENS_SIZE = 160;
+const ZOOM = 2.5;
+
 export function ProductImageTilt({ src, alt, inStock, outOfStockLabel = 'Out of Stock' }: ProductImageTiltProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
+  const [lensPos, setLensPos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -23,14 +28,20 @@ export function ProductImageTilt({ src, alt, inStock, outOfStockLabel = 'Out of 
 
   const glareOpacity = useTransform(
     [x, y] as const,
-    ([vx, vy]: number[]) => (Math.abs(vx) > 0.01 || Math.abs(vy) > 0.01 ? 0.2 : 0)
+    ([vx, vy]: number[]) => (Math.abs(vx) > 0.01 || Math.abs(vy) > 0.01 ? 0.25 : 0)
   );
+  const glareX = useTransform(x, [-0.5, 0.5], [20, 80]);
+  const glareY = useTransform(y, [-0.5, 0.5], [20, 80]);
 
   function handleMouseMove(e: React.MouseEvent) {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
+    const normX = (e.clientX - rect.left) / rect.width;
+    const normY = (e.clientY - rect.top) / rect.height;
+    x.set(normX - 0.5);
+    y.set(normY - 0.5);
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setLensPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   }
 
   function handleMouseLeave() {
@@ -72,14 +83,44 @@ export function ProductImageTilt({ src, alt, inStock, outOfStockLabel = 'Out of 
         )}
       </motion.div>
 
-      {/* Glare effect */}
+      {/* Dynamic glare effect — tracks mouse position */}
       <motion.div
         className="pointer-events-none absolute inset-0 rounded-2xl"
         style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 60%)',
           opacity: glareOpacity,
+          background: useTransform(
+            [glareX, glareY] as const,
+            ([gx, gy]: number[]) =>
+              `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.3) 0%, transparent 55%)`
+          ),
         }}
       />
+
+      {/* Magnifying lens zoom */}
+      {hovered && (
+        <div
+          className="pointer-events-none absolute z-30 rounded-full border-2 border-white/60 shadow-2xl overflow-hidden"
+          style={{
+            width: LENS_SIZE,
+            height: LENS_SIZE,
+            left: lensPos.x - LENS_SIZE / 2,
+            top: lensPos.y - LENS_SIZE / 2,
+          }}
+        >
+          <div
+            className="absolute"
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url(${src})`,
+              backgroundSize: `${ref.current ? ref.current.offsetWidth * ZOOM : 600}px ${ref.current ? ref.current.offsetHeight * ZOOM : 600}px`,
+              backgroundPosition: `${-(mousePos.x * ZOOM - LENS_SIZE / 2)}px ${-(mousePos.y * ZOOM - LENS_SIZE / 2)}px`,
+            }}
+          />
+          {/* Lens glare ring */}
+          <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-white/20" />
+        </div>
+      )}
     </motion.div>
   );
 }

@@ -3,9 +3,12 @@
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Eye, ArrowRight, Tag } from 'lucide-react';
+import { MagneticButton } from './ui/magnetic-button';
+import { useRef, useState } from 'react';
 
 interface ProductCardProps {
   product: {
@@ -28,6 +31,10 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, variant }: ProductCardProps) {
+  const router = useRouter();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [glarePos, setGlarePos] = useState({ x: 50, y: 50 });
+  const [glareVisible, setGlareVisible] = useState(false);
   const imageUrl = product.images?.[0] || '/placeholder.svg';
   const inStock = variant ? variant.stock > 0 : true;
   const isLowStock = inStock && variant && variant.stock <= 3;
@@ -38,10 +45,29 @@ export function ProductCard({ product, variant }: ProductCardProps) {
 
   return (
     <motion.article
-      className="group bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-sm"
+      ref={cardRef}
+      className="group relative bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-sm"
       whileHover={{ y: -6 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      onMouseMove={(e) => {
+        if (!cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        setGlarePos({ x, y });
+        setGlareVisible(true);
+      }}
+      onMouseLeave={() => setGlareVisible(false)}
     >
+      {/* Dynamic glare overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-20 rounded-2xl transition-opacity duration-300"
+        style={{
+          opacity: glareVisible ? 1 : 0,
+          background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(255,255,255,0.15) 0%, transparent 60%)`,
+        }}
+      />
+
       <Link href={`/shoes/${product.slug}`} className="block">
         <div className="relative aspect-square bg-[var(--color-surface-elevated)] overflow-hidden">
           <motion.div
@@ -152,13 +178,15 @@ export function ProductCard({ product, variant }: ProductCardProps) {
 
       {inStock && (
         <div className="px-4 pb-4">
-          <Link
-            href={`/shoes/${product.slug}`}
-            className="group/btn flex items-center justify-center gap-2 w-full mt-1 bg-primary-600 hover:bg-primary-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95"
+          <MagneticButton
+            variant="primary"
+            size="md"
+            className="w-full mt-1"
+            onClick={() => router.push(`/shoes/${product.slug}`)}
           >
             View Details
-            <ArrowRight size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
-          </Link>
+            <ArrowRight size={14} className="ml-1" />
+          </MagneticButton>
         </div>
       )}
     </motion.article>

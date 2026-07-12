@@ -1,16 +1,138 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { X, Minus, Plus, Trash2, ShoppingBag, ArrowRight, Truck, Package } from 'lucide-react';
+import { MagneticButton } from './ui/magnetic-button';
 
 const FREE_DELIVERY_THRESHOLD = 700000;
+const SWIPE_THRESHOLD = -80;
+
+function SwipeableCartItem({
+  item,
+  onRemove,
+  onUpdateQuantity,
+  onClose,
+}: {
+  item: ReturnType<typeof useCartStore.getState>['items'][number];
+  onRemove: (id: string) => void;
+  onUpdateQuantity: (id: string, qty: number) => void;
+  onClose: () => void;
+}) {
+  const x = useMotionValue(0);
+  const deleteOpacity = useTransform(x, [SWIPE_THRESHOLD, -40], [1, 0]);
+  const deleteScale = useTransform(x, [SWIPE_THRESHOLD, -40], [1, 0.5]);
+  const [dragging, setDragging] = useState(false);
+
+  return (
+    <motion.li
+      layout
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -200, height: 0, marginBottom: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      className="relative rounded-xl overflow-hidden"
+    >
+      {/* Red delete background */}
+      <div className="absolute inset-0 flex items-center justify-end pr-6 bg-red-500 rounded-xl">
+        <motion.div
+          style={{ opacity: deleteOpacity, scale: deleteScale }}
+          className="flex items-center gap-2 text-white"
+        >
+          <Trash2 size={18} />
+          <span className="text-sm font-bold">Delete</span>
+        </motion.div>
+      </div>
+
+      {/* Draggable item content */}
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.4}
+        onDragStart={() => setDragging(true)}
+        onDragEnd={(_, info) => {
+          setDragging(false);
+          if (info.offset.x < SWIPE_THRESHOLD) {
+            onRemove(item.variantId);
+          }
+        }}
+        style={{ x, touchAction: 'pan-y' }}
+        className="relative flex gap-4 p-3 rounded-xl bg-[var(--color-surface-elevated)] border border-[var(--color-border)] z-10 cursor-grab active:cursor-grabbing"
+      >
+        <Link
+          href={`/shoes/${item.productSlug}`}
+          onClick={onClose}
+          className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800"
+        >
+          <Image
+            src={item.image}
+            alt={item.productName}
+            fill
+            className="object-cover"
+            sizes="96px"
+          />
+        </Link>
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+          <div>
+            <Link
+              href={`/shoes/${item.productSlug}`}
+              className="font-semibold text-sm truncate block font-[var(--font-heading)] text-[var(--color-text)] hover:text-primary-600 transition-colors"
+              onClick={onClose}
+            >
+              {item.productName}
+            </Link>
+            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+              {item.variantSize} / {item.variantColor}
+            </p>
+            <p className="text-sm font-bold text-primary-600 mt-1">
+              {formatPrice(item.unitPrice)}
+            </p>
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center border border-[var(--color-border)] rounded-xl overflow-hidden">
+              <motion.button
+                onClick={() => onUpdateQuantity(item.variantId, item.quantity - 1)}
+                className="w-9 h-9 flex items-center justify-center hover:bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] transition-colors"
+                aria-label="Decrease quantity"
+                whileTap={{ scale: 0.85 }}
+              >
+                <Minus size={14} />
+              </motion.button>
+              <span className="w-10 h-9 flex items-center justify-center text-sm font-bold text-[var(--color-text)] bg-[var(--color-surface-elevated)]">
+                {item.quantity}
+              </span>
+              <motion.button
+                onClick={() => onUpdateQuantity(item.variantId, item.quantity + 1)}
+                className="w-9 h-9 flex items-center justify-center hover:bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] transition-colors"
+                aria-label="Increase quantity"
+                whileTap={{ scale: 0.85 }}
+              >
+                <Plus size={14} />
+              </motion.button>
+            </div>
+            <motion.button
+              onClick={() => onRemove(item.variantId)}
+              className="p-2 text-[var(--color-text-muted)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
+              whileTap={{ scale: 0.85 }}
+              aria-label="Remove item"
+            >
+              <Trash2 size={14} />
+            </motion.button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.li>
+  );
+}
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getSubtotal, getTotalItems } = useCartStore();
+  const router = useRouter();
   const subtotal = getSubtotal();
   const totalItems = getTotalItems();
   const remaining = Math.max(FREE_DELIVERY_THRESHOLD - subtotal, 0);
@@ -31,7 +153,7 @@ export function CartDrawer() {
           />
 
           <motion.aside
-            className="relative md:ml-auto md:max-w-md w-full bg-[var(--color-surface)] flex flex-col shadow-2xl border-l border-[var(--color-border)]"
+            className="relative h-full md:ml-auto md:max-w-md w-full bg-[var(--color-surface)] flex flex-col shadow-2xl border-l border-[var(--color-border)]"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -104,80 +226,16 @@ export function CartDrawer() {
                   </Link>
                 </div>
               ) : (
-                <ul className="space-y-4">
+                <ul className="space-y-3">
                   <AnimatePresence initial={false}>
                     {items.map((item) => (
-                      <motion.li
+                      <SwipeableCartItem
                         key={item.variantId}
-                        layout
-                        initial={{ opacity: 0, x: 40 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 40, height: 0, marginBottom: 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                        className="flex gap-4 p-3 rounded-xl bg-[var(--color-surface-elevated)] border border-[var(--color-border)]"
-                      >
-                        <Link
-                          href={`/shoes/${item.productSlug}`}
-                          onClick={closeCart}
-                          className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800"
-                        >
-                          <Image
-                            src={item.image}
-                            alt={item.productName}
-                            fill
-                            className="object-cover"
-                            sizes="96px"
-                          />
-                        </Link>
-                        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                          <div>
-                            <Link
-                              href={`/shoes/${item.productSlug}`}
-                              className="font-semibold text-sm truncate block font-[var(--font-heading)] text-[var(--color-text)] hover:text-primary-600 transition-colors"
-                              onClick={closeCart}
-                            >
-                              {item.productName}
-                            </Link>
-                            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                              {item.variantSize} / {item.variantColor}
-                            </p>
-                            <p className="text-sm font-bold text-primary-600 mt-1">
-                              {formatPrice(item.unitPrice)}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between mt-2">
-                            <div className="flex items-center border border-[var(--color-border)] rounded-xl overflow-hidden">
-                              <motion.button
-                                onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                                className="w-9 h-9 flex items-center justify-center hover:bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] transition-colors"
-                                aria-label="Decrease quantity"
-                                whileTap={{ scale: 0.85 }}
-                              >
-                                <Minus size={14} />
-                              </motion.button>
-                              <span className="w-10 h-9 flex items-center justify-center text-sm font-bold text-[var(--color-text)] bg-[var(--color-surface-elevated)]">
-                                {item.quantity}
-                              </span>
-                              <motion.button
-                                onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                                className="w-9 h-9 flex items-center justify-center hover:bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] transition-colors"
-                                aria-label="Increase quantity"
-                                whileTap={{ scale: 0.85 }}
-                              >
-                                <Plus size={14} />
-                              </motion.button>
-                            </div>
-                            <motion.button
-                              onClick={() => removeItem(item.variantId)}
-                              className="p-2 text-[var(--color-text-muted)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
-                              whileTap={{ scale: 0.85 }}
-                              aria-label="Remove item"
-                            >
-                              <Trash2 size={14} />
-                            </motion.button>
-                          </div>
-                        </div>
-                      </motion.li>
+                        item={item}
+                        onRemove={removeItem}
+                        onUpdateQuantity={updateQuantity}
+                        onClose={closeCart}
+                      />
                     ))}
                   </AnimatePresence>
                 </ul>
@@ -197,14 +255,15 @@ export function CartDrawer() {
                   <span className="text-xl font-bold text-[var(--color-text)] font-[var(--font-heading)]">{formatPrice(subtotal)}</span>
                 </div>
                 <p className="text-xs text-[var(--color-text-muted)]">Delivery calculated at checkout</p>
-                <Link
-                  href="/checkout"
-                  onClick={closeCart}
-                  className="flex items-center justify-center gap-2 w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold hover:bg-primary-700 transition-all active:scale-[0.98] shadow-lg shadow-primary-600/20"
+                <MagneticButton
+                  variant="primary"
+                  size="lg"
+                  className="w-full !py-3.5 !shadow-lg !shadow-primary-600/20"
+                  onClick={() => { closeCart(); router.push('/checkout'); }}
                 >
                   Checkout
-                  <ArrowRight size={16} />
-                </Link>
+                  <ArrowRight size={16} className="ml-1" />
+                </MagneticButton>
                 <div className="flex gap-3 pt-1">
                   <Link
                     href="/cart"

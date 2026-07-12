@@ -5,6 +5,7 @@ import { useCartStore } from '@/lib/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ShoppingCart } from 'lucide-react';
+import { MagneticButton } from '@/components/ui/magnetic-button';
 
 interface AddToCartFormProps {
   product: {
@@ -185,20 +186,16 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
 
       {/* Add to Cart */}
       <div className="flex gap-4 pt-4 border-t border-gray-100">
-        <motion.button
-          onClick={handleAddToCart}
-          disabled={!canAdd}
+        <MagneticButton
+          variant="primary"
+          size="lg"
           className={cn(
-            'flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-base transition-all',
-            canAdd
-              ? added
-                ? 'bg-green-500 text-white'
-                : 'bg-primary-600 text-white hover:bg-primary-700 shadow-md hover:shadow-lg'
-              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            'flex-1 !py-3.5',
+            !canAdd && '!bg-gray-200 !text-gray-500 cursor-not-allowed',
+            added && '!bg-green-500'
           )}
-          whileTap={canAdd ? { scale: 0.95 } : undefined}
-          whileHover={canAdd ? { scale: 1.02 } : undefined}
-          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          disabled={!canAdd}
+          onClick={handleAddToCart}
         >
           <AnimatePresence mode="wait">
             {added ? (
@@ -225,7 +222,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
               </motion.span>
             )}
           </AnimatePresence>
-        </motion.button>
+        </MagneticButton>
 
         {selectedColor && selectedSize && selectedVariant && selectedVariant.stock > 0 && (
           <motion.span
