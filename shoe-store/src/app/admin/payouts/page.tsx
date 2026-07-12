@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { payouts, suppliers } from '@/lib/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
+import { AnimatedCard, StaggerContainer, StaggerItem } from '@/components/admin/animated';
 export const dynamic = 'force-dynamic';
 
 async function getPayouts() {
@@ -39,31 +40,33 @@ export default async function PayoutsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Payouts</h1>
-        <div className="text-sm text-gray-500">
-          Pending: <span className="font-bold text-yellow-600">{formatPrice(pendingTotal)}</span>
+      <AnimatedCard>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-[var(--color-text)]">Payouts</h1>
+          <div className="text-sm text-[var(--color-text-muted)]">
+            Pending: <span className="font-bold text-yellow-600 dark:text-yellow-400">{formatPrice(pendingTotal)}</span>
+          </div>
         </div>
-      </div>
+      </AnimatedCard>
 
       {payoutsList.length > 0 ? (
-        <div className="bg-white rounded-xl border overflow-x-auto">
+        <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="text-left px-4 py-3 font-medium">Supplier</th>
-                <th className="text-right px-4 py-3 font-medium">Amount</th>
-                <th className="text-center px-4 py-3 font-medium">Status</th>
-                <th className="text-left px-4 py-3 font-medium">Method</th>
-                <th className="text-left px-4 py-3 font-medium">Reference</th>
-                <th className="text-left px-4 py-3 font-medium">Date</th>
+              <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-elevated)]">
+                <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Supplier</th>
+                <th className="text-right px-4 py-3 font-medium text-[var(--color-text-muted)]">Amount</th>
+                <th className="text-center px-4 py-3 font-medium text-[var(--color-text-muted)]">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Method</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Reference</th>
+                <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-[var(--color-border)]">
               {payoutsList.map((payout) => (
-                <tr key={payout.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium">{payout.supplierName || 'Unknown'}</td>
-                  <td className="px-4 py-3 text-right font-medium">{formatPrice(payout.amount)}</td>
+                <tr key={payout.id} className="hover:bg-[var(--color-surface-elevated)] transition-colors">
+                  <td className="px-4 py-3 font-medium text-[var(--color-text)]">{payout.supplierName || 'Unknown'}</td>
+                  <td className="px-4 py-3 text-right font-medium text-[var(--color-text)]">{formatPrice(payout.amount)}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`badge ${
                       payout.status === 'paid' ? 'badge-success' :
@@ -73,9 +76,9 @@ export default async function PayoutsPage() {
                       {payout.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{payout.method || '-'}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{payout.reference || '-'}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">
+                  <td className="px-4 py-3 text-[var(--color-text-muted)]">{payout.method || '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-text-muted)] text-xs">{payout.reference || '-'}</td>
+                  <td className="px-4 py-3 text-[var(--color-text-muted)] text-xs">
                     {payout.paidAt
                       ? new Date(Number(payout.paidAt) * 1000).toLocaleDateString()
                       : new Date(Number(payout.createdAt ?? 0) * 1000).toLocaleDateString()}
@@ -86,9 +89,9 @@ export default async function PayoutsPage() {
           </table>
         </div>
       ) : (
-        <div className="bg-gray-50 rounded-xl p-16 text-center">
-          <p className="text-gray-500 text-lg">No payouts yet</p>
-          <p className="text-gray-400 text-sm mt-2">Payouts are generated weekly after orders are delivered</p>
+        <div className="bg-[var(--color-surface-elevated)] rounded-xl p-16 text-center">
+          <p className="text-[var(--color-text-muted)] text-lg">No payouts yet</p>
+          <p className="text-[var(--color-text-muted)] text-sm mt-2">Payouts are generated weekly after orders are delivered</p>
         </div>
       )}
     </div>

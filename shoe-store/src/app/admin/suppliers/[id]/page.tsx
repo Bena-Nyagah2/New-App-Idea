@@ -1,59 +1,52 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
-export default function EditSupplierPage() {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function EditSupplierPage({ params }: PageProps) {
   const router = useRouter();
-  const params = useParams();
-  const id = params.id as string;
+  const { id } = React.use(params);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
   const [form, setForm] = useState({
     name: '',
     contactName: '',
     phone: '',
     email: '',
     location: '',
-    paymentTerms: 'mpesa',
     notes: '',
-    isActive: true,
   });
 
   useEffect(() => {
     fetch(`/api/admin/suppliers/${id}`)
-      .then(r => r.json())
+      .then(res => res.json())
       .then(data => {
-        if (data.error) throw new Error(data.error);
         setForm({
-          name: data.supplier.name || '',
-          contactName: data.supplier.contactName || '',
-          phone: data.supplier.phone || '',
-          email: data.supplier.email || '',
-          location: data.supplier.location || '',
-          paymentTerms: data.supplier.paymentTerms || 'mpesa',
-          notes: data.supplier.notes || '',
-          isActive: data.supplier.isActive ?? true,
+          name: data.name || '',
+          contactName: data.contactName || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          location: data.location || '',
+          notes: data.notes || '',
         });
-        setLoading(false);
       })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [id]);
+
+  function updateField(field: string, value: string) {
+    setForm(prev => ({ ...prev, [field]: value }));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    setError(null);
 
     try {
       const res = await fetch(`/api/admin/suppliers/${id}`, {
@@ -62,115 +55,80 @@ export default function EditSupplierPage() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || 'Failed to update supplier');
+      }
 
-      setSuccess(true);
-      setTimeout(() => router.push('/admin/suppliers'), 1200);
+      toast.success('Supplier updated');
+      router.push('/admin/suppliers');
+      router.refresh();
     } catch (err) {
-      setError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setSaving(false);
     }
   }
 
   if (loading) {
-    return <div className="text-center py-16 text-gray-400">Loading supplier...</div>;
+    return <div className="py-16 text-center text-[var(--color-text-muted)] animate-pulse">Loading supplier…</div>;
   }
 
   return (
-    <div className="max-w-lg animate-fade-in">
-      <h1 className="text-2xl font-bold mb-6">Edit Supplier</h1>
+    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
+      <div className="flex items-center gap-3">
+        <button onClick={() => router.back()} className="p-2 hover:bg-[var(--color-surface-elevated)] rounded-lg transition-colors text-[var(--color-text-muted)]">
+          ←
+        </button>
+        <h1 className="text-2xl font-bold text-[var(--color-text)]">Edit Supplier</h1>
+      </div>
 
-      {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-          Supplier updated successfully!
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white rounded-xl border p-6">
+      <form onSubmit={handleSubmit} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 space-y-4">
         <Input
-          label="Name / Business Name"
+          label="Supplier Name"
           value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-          placeholder="e.g., Nairobi Sneaker Source"
+          onChange={e => updateField('name', e.target.value)}
+          required
         />
 
         <Input
           label="Contact Name"
           value={form.contactName}
-          onChange={e => setForm({ ...form, contactName: e.target.value })}
-          placeholder="e.g., Alex Mutua"
+          onChange={e => updateField('contactName', e.target.value)}
         />
 
-        <Input
-          label="Phone"
-          type="tel"
-          value={form.phone}
-          onChange={e => setForm({ ...form, phone: e.target.value })}
-          placeholder="07XX XXX XXX"
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="Phone"
+            value={form.phone}
+            onChange={e => updateField('phone', e.target.value)}
+          />
+          <Input
+            label="Email"
+            type="email"
+            value={form.email}
+            onChange={e => updateField('email', e.target.value)}
+          />
+        </div>
 
         <Input
-          label="Email"
-          type="email"
-          value={form.email}
-          onChange={e => setForm({ ...form, email: e.target.value })}
-          placeholder="supplier@example.com"
-        />
-
-        <Input
-          label="Location (Nairobi Area)"
+          label="Location"
           value={form.location}
-          onChange={e => setForm({ ...form, location: e.target.value })}
-          placeholder="CBD, Westlands, etc."
+          onChange={e => updateField('location', e.target.value)}
         />
 
-        <Select
-          label="Payment Terms"
-          value={form.paymentTerms}
-          onChange={e => setForm({ ...form, paymentTerms: e.target.value })}
-          options={[
-            { value: 'mpesa', label: 'M-Pesa (Weekly)' },
-            { value: 'bank', label: 'Bank Transfer' },
-            { value: 'cash', label: 'Cash' },
-            { value: 'net15', label: 'Net 15 Days' },
-            { value: 'net30', label: 'Net 30 Days' },
-            { value: 'consignment', label: 'Consignment (pay after sale)' },
-          ]}
-        />
-
-        <Textarea
+        <Input
           label="Notes"
           value={form.notes}
-          onChange={e => setForm({ ...form, notes: e.target.value })}
+          onChange={e => updateField('notes', e.target.value)}
         />
 
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            id="isActive"
-            checked={form.isActive}
-            onChange={e => setForm({ ...form, isActive: e.target.checked })}
-            className="w-4 h-4 text-primary-600 rounded"
-          />
-          <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active supplier</label>
-        </div>
-
-        <div className="flex gap-3 pt-2">
-          <Button type="submit" loading={saving} className="flex-1">
-            Save Changes
-          </Button>
-          <Button type="button" variant="outline" onClick={() => router.back()} className="flex-1">
-            Cancel
-          </Button>
-        </div>
+        <Button type="submit" loading={saving} className="w-full" size="lg">
+          Save Changes
+        </Button>
       </form>
     </div>
   );
 }
+
+import React from 'react';

@@ -67,7 +67,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <AnimatedCard>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-[var(--color-text)]">Dashboard</h1>
       </AnimatedCard>
 
       {/* Stats Cards */}
@@ -77,7 +77,7 @@ export default async function AdminDashboardPage() {
             title="Orders Today"
             value={stats.ordersToday.toString()}
             icon="🛒"
-            color="text-blue-600"
+            color="text-blue-600 dark:text-blue-400"
           />
         </StaggerItem>
         <StaggerItem>
@@ -85,7 +85,7 @@ export default async function AdminDashboardPage() {
             title="Revenue Today"
             value={formatPrice(Number(stats.revenueToday ?? 0))}
             icon="💰"
-            color="text-green-600"
+            color="text-green-600 dark:text-green-400"
           />
         </StaggerItem>
         <StaggerItem>
@@ -93,7 +93,7 @@ export default async function AdminDashboardPage() {
             title="Active Products"
             value={stats.totalProducts.toString()}
             icon="👟"
-            color="text-purple-600"
+            color="text-purple-600 dark:text-purple-400"
           />
         </StaggerItem>
         <StaggerItem>
@@ -101,7 +101,7 @@ export default async function AdminDashboardPage() {
             title="Pending Orders"
             value={stats.pendingOrders.toString()}
             icon="📦"
-            color="text-yellow-600"
+            color="text-yellow-600 dark:text-yellow-400"
           />
         </StaggerItem>
       </StaggerContainer>
@@ -109,27 +109,27 @@ export default async function AdminDashboardPage() {
       {/* Recent Orders */}
       <AnimatedCard delay={0.3}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Recent Orders</h2>
+          <h2 className="text-xl font-semibold text-[var(--color-text)]">Recent Orders</h2>
           <Link href="/admin/orders" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
             View All →
           </Link>
         </div>
 
         {recentOrders.length > 0 ? (
-          <div className="bg-white rounded-xl border overflow-x-auto">
+          <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="text-left px-4 py-3 font-medium">Order</th>
-                  <th className="text-left px-4 py-3 font-medium">Customer</th>
-                  <th className="text-right px-4 py-3 font-medium">Total</th>
-                  <th className="text-center px-4 py-3 font-medium">Payment</th>
-                  <th className="text-left px-4 py-3 font-medium">Date</th>
+                <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface-elevated)]">
+                  <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Order</th>
+                  <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Customer</th>
+                  <th className="text-right px-4 py-3 font-medium text-[var(--color-text-muted)]">Total</th>
+                  <th className="text-center px-4 py-3 font-medium text-[var(--color-text-muted)]">Payment</th>
+                  <th className="text-left px-4 py-3 font-medium text-[var(--color-text-muted)]">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
-                {recentOrders.map((order, index) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+              <tbody className="divide-y divide-[var(--color-border)]">
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="hover:bg-[var(--color-surface-elevated)] transition-colors">
                     <td className="px-4 py-3">
                       <Link href={`/admin/orders/${order.id}`} className="text-primary-600 font-medium hover:underline">
                         #{order.id.slice(0, 8)}
@@ -137,11 +137,11 @@ export default async function AdminDashboardPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div>
-                        <p className="font-medium">{order.customerName}</p>
-                        <p className="text-gray-500 text-xs">{order.customerPhone}</p>
+                        <p className="font-medium text-[var(--color-text)]">{order.customerName}</p>
+                        <p className="text-[var(--color-text-muted)] text-xs">{order.customerPhone}</p>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium">
+                    <td className="px-4 py-3 text-right font-medium text-[var(--color-text)]">
                       {formatPrice(order.total)}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -149,7 +149,7 @@ export default async function AdminDashboardPage() {
                         {order.paymentMethod === 'paystack' ? 'Online' : 'COD'} · {order.paymentStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500">
+                    <td className="px-4 py-3 text-[var(--color-text-muted)]">
                       {new Date(Number(order.createdAt ?? 0) * 1000).toLocaleDateString()}
                     </td>
                   </tr>
@@ -158,7 +158,7 @@ export default async function AdminDashboardPage() {
             </table>
           </div>
         ) : (
-          <div className="bg-gray-50 rounded-xl p-8 text-center text-gray-500">
+          <div className="bg-[var(--color-surface-elevated)] rounded-xl p-8 text-center text-[var(--color-text-muted)]">
             No orders yet
           </div>
         )}
@@ -174,10 +174,10 @@ function StatCard({ title, value, icon, color }: {
   color: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border p-5 hover:shadow-md transition-shadow">
+    <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-5 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-3 mb-2">
         <span className="text-2xl">{icon}</span>
-        <span className="text-sm text-gray-500 font-medium">{title}</span>
+        <span className="text-sm text-[var(--color-text-muted)] font-medium">{title}</span>
       </div>
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
     </div>

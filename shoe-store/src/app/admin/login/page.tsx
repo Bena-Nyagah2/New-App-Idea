@@ -53,25 +53,25 @@ function LoginForm() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.2 }}
-          className="w-16 h-16 bg-primary-100 rounded-full mx-auto mb-4 flex items-center justify-center"
+          className="w-16 h-16 bg-primary-100 dark:bg-primary-500/10 rounded-full mx-auto mb-4 flex items-center justify-center"
         >
-          <Lock className="text-primary-600" size={28} />
+          <Lock className="text-primary-600 dark:text-primary-400" size={28} />
         </motion.div>
-        <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-        <p className="text-sm text-gray-500 mt-1">Enter the admin password to continue</p>
+        <h1 className="text-2xl font-bold text-[var(--color-text)]">Admin Login</h1>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Enter the admin password to continue</p>
       </div>
 
       {error && (
         <motion.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+          className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm"
         >
           {error}
         </motion.div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border p-6 space-y-4 shadow-sm">
+      <form onSubmit={handleSubmit} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 space-y-4 shadow-sm">
         <Input
           type="password"
           label="Password"
@@ -91,8 +91,8 @@ function LoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Suspense fallback={<div className="text-gray-500 text-sm">Loading...</div>}>
+    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4">
+      <Suspense fallback={<div className="text-[var(--color-text-muted)] text-sm">Loading...</div>}>
         <LoginForm />
       </Suspense>
     </div>

@@ -2,43 +2,36 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
+import { MagneticButton } from '@/components/ui/magnetic-button';
 
 interface UpdateStatusButtonProps {
   orderId: string;
   currentStatus: string;
 }
 
+const STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+
 export function UpdateStatusButton({ orderId, currentStatus }: UpdateStatusButtonProps) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
 
-  const statuses = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'paid', label: 'Paid' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'shipped', label: 'Shipped' },
-    { value: 'delivered', label: 'Delivered' },
-    { value: 'cancelled', label: 'Cancelled' },
-  ];
-
-  // Only show statuses that make sense as next steps
-  const availableStatuses = getNextStatuses(currentStatus);
-
-  async function handleUpdate(newStatus: string) {
+  async function updateStatus(newStatus: string) {
     setLoading(true);
     try {
-      const res = await fetch(`/api/orders/${orderId}/status`, {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) {
-        router.refresh();
-        setShowDropdown(false);
-      }
-    } catch (err) {
-      console.error('Failed to update status:', err);
+      if (!res.ok) throw new Error('Failed');
+      toast.success(`Status updated to ${newStatus}`);
+      setOpen(false);
+      router.refresh();
+    } catch {
+      toast.error('Failed to update status');
     } finally {
       setLoading(false);
     }
@@ -46,50 +39,37 @@ export function UpdateStatusButton({ orderId, currentStatus }: UpdateStatusButto
 
   return (
     <div className="relative">
-      <button
-        onClick={() => setShowDropdown(!showDropdown)}
-        className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
-      >
-        Update
-      </button>
-      
-      {showDropdown && (
-        <div className="absolute right-0 mt-1 bg-white border rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
-          {availableStatuses.map(status => (
-            <button
-              key={status.value}
-              onClick={() => handleUpdate(status.value)}
-              disabled={loading}
-              className="block w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors"
-            >
-              {status.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <MagneticButton>
+        <motion.button
+          onClick={() => setOpen(!open)}
+          whileTap={{ scale: 0.95 }}
+          className="bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-primary-500/10 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+        >
+          {currentStatus} ▾
+        </motion.button>
+      </MagneticButton>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            className="absolute right-0 top-full mt-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-lg z-10 overflow-hidden min-w-[140px]"
+          >
+            {STATUSES.filter(s => s !== currentStatus).map(s => (
+              <button
+                key={s}
+                onClick={() => updateStatus(s)}
+                disabled={loading}
+                className="w-full text-left px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-elevated)] transition-colors capitalize disabled:opacity-50"
+              >
+                {s}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
-}
-
-function getNextStatuses(current: string) {
-  switch (current) {
-    case 'pending': return [
-      { value: 'confirmed', label: '✓ Confirm' },
-      { value: 'cancelled', label: '✗ Cancel' },
-    ];
-    case 'paid': return [
-      { value: 'confirmed', label: '→ Confirm' },
-      { value: 'cancelled', label: '✗ Cancel' },
-    ];
-    case 'confirmed': return [
-      { value: 'shipped', label: '🚚 Ship' },
-      { value: 'cancelled', label: '✗ Cancel' },
-    ];
-    case 'shipped': return [
-      { value: 'delivered', label: '📦 Delivered' },
-    ];
-    case 'delivered': return [];
-    case 'cancelled': return [];
-    default: return [];
-  }
 }

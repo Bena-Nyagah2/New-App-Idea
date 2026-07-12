@@ -137,26 +137,26 @@ export default function EditProductPage() {
   }
 
   if (loading) {
-    return <div className="text-center py-16 text-gray-400">Loading product...</div>;
+    return <div className="text-center py-16 text-[var(--color-text-muted)] animate-pulse">Loading product...</div>;
   }
 
   return (
     <div className="max-w-2xl animate-fade-in">
-      <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[var(--color-text)]">Edit Product</h1>
 
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg mb-6">
           Product updated successfully!
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl border p-6">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6">
         <Input
           label="Product Name"
           placeholder="Nike Air Max 90"
@@ -191,12 +191,12 @@ export default function EditProductPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text)] mb-1.5">
               <input
                 type="checkbox"
                 checked={form.onSale}
                 onChange={e => setForm({ ...form, onSale: e.target.checked })}
-                className="rounded border-gray-300"
+                className="rounded border-[var(--color-border)]"
               />
               Put on sale
             </label>
@@ -235,13 +235,13 @@ export default function EditProductPage() {
             onChange={e => setForm({ ...form, isActive: e.target.checked })}
             className="w-4 h-4 text-primary-600 rounded"
           />
-          <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active product (visible on store)</label>
+          <label htmlFor="isActive" className="text-sm font-medium text-[var(--color-text)]">Active product (visible on store)</label>
         </div>
 
         {/* Variants */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium">Variants (Sizes &amp; Colors)</h3>
+            <h3 className="font-medium text-[var(--color-text)]">Variants (Sizes &amp; Colors)</h3>
             <button type="button" onClick={addVariant} className="text-primary-600 text-sm font-medium hover:text-primary-700">
               + Add Variant
             </button>
@@ -249,11 +249,11 @@ export default function EditProductPage() {
 
           <div className="space-y-3 max-h-96 overflow-y-auto scrollbar-hide">
             {variants.map((variant, idx) => (
-              <div key={idx} className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg items-end">
+              <div key={idx} className="flex flex-wrap gap-2 p-3 bg-[var(--color-surface-elevated)] rounded-lg items-end">
                 <select
                   value={variant.size}
                   onChange={e => updateVariant(idx, 'size', e.target.value)}
-                  className="input text-sm py-1 bg-white max-w-[100px]"
+                  className="input text-sm py-1 bg-[var(--color-surface)] max-w-[100px]"
                 >
                   <option value="" disabled>Size</option>
                   {SIZES_EU.map(s => <option key={s} value={s}>EU {s}</option>)}
@@ -261,7 +261,7 @@ export default function EditProductPage() {
                 <select
                   value={variant.color}
                   onChange={e => updateVariant(idx, 'color', e.target.value)}
-                  className="input text-sm py-1 bg-white max-w-[120px]"
+                  className="input text-sm py-1 bg-[var(--color-surface)] max-w-[120px]"
                 >
                   <option value="" disabled>Color</option>
                   {['Black', 'White', 'Red', 'Blue', 'Grey', 'Green', 'Pink', 'Brown'].map(c => (
@@ -272,27 +272,27 @@ export default function EditProductPage() {
                   value={variant.colorHex}
                   onChange={e => updateVariant(idx, 'colorHex', e.target.value)}
                   placeholder="#000"
-                  className="input text-sm py-1 bg-white w-20"
+                  className="input text-sm py-1 bg-[var(--color-surface)] w-20"
                 />
                 <input
                   value={variant.stock}
                   onChange={e => updateVariant(idx, 'stock', e.target.value)}
                   placeholder="Stock"
                   type="number"
-                  className="input text-sm py-1 bg-white max-w-[70px]"
+                  className="input text-sm py-1 bg-[var(--color-surface)] max-w-[70px]"
                 />
                 <input
                   value={variant.costPrice}
                   onChange={e => updateVariant(idx, 'costPrice', e.target.value)}
                   placeholder="Cost KES"
                   type="number"
-                  className="input text-sm py-1 bg-white max-w-[90px]"
+                  className="input text-sm py-1 bg-[var(--color-surface)] max-w-[90px]"
                 />
                 <input
                   value={variant.sku}
                   onChange={e => updateVariant(idx, 'sku', e.target.value)}
                   placeholder="SKU"
-                  className="input text-sm py-1 bg-white max-w-[120px]"
+                  className="input text-sm py-1 bg-[var(--color-surface)] max-w-[120px]"
                 />
                 {variants.length > 1 && (
                   <button

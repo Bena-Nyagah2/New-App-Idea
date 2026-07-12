@@ -1,46 +1,50 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { MagneticButton } from '@/components/ui/magnetic-button';
 
 interface SupplierActionsProps {
-  supplierId: string;
+  id: string;
   isActive: boolean;
 }
 
-export function SupplierActions({ supplierId, isActive }: SupplierActionsProps) {
+export function SupplierActions({ id, isActive }: SupplierActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function toggleActive() {
     setLoading(true);
     try {
-      await fetch(`/api/admin/suppliers/${supplierId}`, {
+      const res = await fetch(`/api/admin/suppliers/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isActive: !isActive }),
       });
+      if (!res.ok) throw new Error('Failed');
+      toast.success(isActive ? 'Supplier deactivated' : 'Supplier activated');
       router.refresh();
+    } catch {
+      toast.error('Failed to update supplier');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="mt-4 pt-3 border-t flex gap-2">
-      <a
-        href={`/admin/suppliers/${supplierId}`}
-        className="text-xs text-primary-600 hover:text-primary-700 font-medium"
-      >
-        Edit
-      </a>
+    <MagneticButton>
       <button
         onClick={toggleActive}
         disabled={loading}
-        className="text-xs text-red-600 hover:text-red-700 font-medium disabled:opacity-50"
+        className={`flex-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          isActive
+            ? 'bg-red-50 dark:bg-red-500/10 text-red-600 hover:bg-red-100 dark:hover:bg-red-500/20'
+            : 'bg-green-50 dark:bg-green-500/10 text-green-600 hover:bg-green-100 dark:hover:bg-green-500/20'
+        }`}
       >
-        {isActive ? 'Deactivate' : 'Reactivate'}
+        {isActive ? 'Deactivate' : 'Activate'}
       </button>
-    </div>
+    </MagneticButton>
   );
 }

@@ -1,107 +1,103 @@
 import { db } from '@/lib/db';
-import { products, variants } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
-import { formatPrice, parseJsonSafe } from '@/lib/utils';
-import Image from 'next/image';
+import { products, suppliers, variants } from '@/lib/db/schema';
+import { desc, sql } from 'drizzle-orm';
 import Link from 'next/link';
 import { ProductActions } from './product-actions';
+import { AnimatedCard, StaggerContainer, StaggerItem } from '@/components/admin/animated';
+import { parseJsonSafe } from '@/lib/utils';
+
 export const dynamic = 'force-dynamic';
 
-async function getProducts() {
+async function getInventory() {
   return db
-    .select()
+    .select({
+      id: products.id,
+      name: products.name,
+      basePrice: products.basePrice,
+      onSale: products.onSale,
+      salePrice: products.salePrice,
+      category: products.category,
+      brand: products.brand,
+      isActive: products.isActive,
+      images: products.images,
+      stock: sql<number>`COALESCE(SUM(${variants.stock}), 0)`.as('stock'),
+    })
     .from(products)
-    .orderBy(desc(products.createdAt))
-    .limit(50);
-}
-
-async function getVariantsForProduct(productId: string) {
-  return db
-    .select()
-    .from(variants)
-    .where(eq(variants.productId, productId));
+    .leftJoin(variants, sql`${variants.productId} = ${products.id}`)
+    .groupBy(products.id)
+    .orderBy(desc(products.createdAt));
 }
 
 export default async function InventoryPage() {
-  const productsList = await getProducts();
+  const inventory = await getInventory();
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Inventory</h1>
-        <Link href="/admin/inventory/add" className="btn btn-primary text-sm">
-          + Add Product
-        </Link>
-      </div>
+      <AnimatedCard>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-[var(--color-text)]">Inventory</h1>
+          <Link
+            href="/admin/inventory/add"
+            className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            + Add Product
+          </Link>
+        </div>
+      </AnimatedCard>
 
-      {productsList.length > 0 ? (
-        <div className="space-y-4">
-          {productsList.map(async (product) => {
-            const productVariants = await getVariantsForProduct(product.id);
-            const totalStock = productVariants.reduce((sum, v) => sum + v.stock, 0);
-            const images = parseJsonSafe(product.images, []);
-            
+      {inventory.length > 0 ? (
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {inventory.map((product) => {
+            const totalStock = product.stock;
+            const images = parseJsonSafe(product.images, []) as string[];
+            const mainImage = images[0] || null;
             return (
-              <div key={product.id} className="bg-white rounded-2xl border overflow-hidden card-3d">
-                <div className="flex items-start gap-4 p-4">
-                  {/* Image */}
-                  <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0">
-                    {images[0] && (
-                      <Image src={images[0]} alt={product.name} width={80} height={80} className="w-full h-full object-cover" />
+              <StaggerItem key={product.id}>
+                <div className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] overflow-hidden hover:shadow-md transition-all">
+                  <div className="flex gap-3 p-4">
+                    {mainImage ? (
+                      <img
+                        src={mainImage}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded-lg bg-[var(--color-surface-elevated)]"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-[var(--color-surface-elevated)] rounded-lg flex items-center justify-center text-lg">
+                        👟
+                      </div>
                     )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-primary-600 uppercase">{product.brand}</span>
-                      <span className="text-sm text-gray-500 capitalize">· {product.category}</span>
-                    </div>
-                    <h3 className="font-semibold text-lg">{product.name}</h3>
-                    <p className="text-gray-600">{formatPrice(product.basePrice)}</p>
-                    
-                    {/* Stock summary */}
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${
-                        totalStock > 10 ? 'bg-green-100 text-green-700' :
-                        totalStock > 0 ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
-                        {totalStock > 0 ? `${totalStock} in stock` : 'Out of stock'}
-                      </span>
-                      <span className="text-sm text-gray-400">{productVariants.length} variants</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate text-[var(--color-text)]">
+                        {product.name}
+                      </h3>
+                      <p className="text-[var(--color-text-muted)] text-xs">
+                        {product.brand} · {product.category}
+                      </p>
+                      <div className="mt-1">
+                        <span className={`badge ${totalStock > 5 ? 'badge-success' : totalStock > 0 ? 'badge-warning' : 'badge-danger'}`}>
+                          {totalStock} in stock
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <ProductActions productId={product.id} />
+
+                  <div className="px-4 pb-4 flex gap-2">
+                    <Link
+                      href={`/admin/inventory/${product.id}`}
+                      className="flex-1 bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-primary-500/10 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-center"
+                    >
+                      Edit
+                    </Link>
+                    <ProductActions id={product.id} isActive={product.isActive} />
                   </div>
                 </div>
-                
-                {/* Variants quick view */}
-                <div className="border-t bg-gray-50 px-4 py-2">
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    {productVariants.slice(0, 10).map(variant => (
-                      <span key={variant.id} className={`px-2 py-0.5 rounded-full border ${
-                        variant.stock > 0 ? 'border-green-200 bg-green-50 text-green-700' :
-                        'border-red-200 bg-red-50 text-red-300'
-                      }`}>
-                        {variant.size}/{variant.color}: {variant.stock || 0}
-                      </span>
-                    ))}
-                    {productVariants.length > 10 && (
-                      <span className="px-2 py-0.5 text-gray-400">+{productVariants.length - 10} more</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       ) : (
-        <div className="bg-gray-50 rounded-xl p-16 text-center">
-          <p className="text-gray-500 text-lg">No products yet</p>
-          <p className="text-gray-400 text-sm mt-2">Add your first shoe product to get started</p>
-          <Link href="/admin/inventory/add" className="mt-4 inline-flex btn btn-primary">
-            Add First Product
-          </Link>
+        <div className="bg-[var(--color-surface-elevated)] rounded-xl p-16 text-center">
+          <p className="text-[var(--color-text-muted)] text-lg">No products yet</p>
         </div>
       )}
     </div>

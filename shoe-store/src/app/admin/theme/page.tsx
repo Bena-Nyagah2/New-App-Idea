@@ -6,6 +6,7 @@ import { useTheme } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatedCard } from '@/components/admin/animated';
 
 export default function ThemePage() {
   const { activeTheme, mode, setActiveTheme, setMode } = useTheme();
@@ -46,10 +47,10 @@ export default function ThemePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold">Theme & Appearance</h1>
-        <p className="text-sm text-gray-500 mt-1">Customize the store look and feel</p>
-      </div>
+      <AnimatedCard>
+        <h1 className="text-2xl font-bold text-[var(--color-text)]">Theme & Appearance</h1>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Customize the store look and feel</p>
+      </AnimatedCard>
 
       <AnimatePresence>
         {saved && (
@@ -57,7 +58,7 @@ export default function ThemePage() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg"
+            className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg"
           >
             Theme saved! Visit the <a href="/" className="underline font-medium">store</a> to see it live.
           </motion.div>
@@ -65,35 +66,37 @@ export default function ThemePage() {
       </AnimatePresence>
 
       {/* Dark Mode Toggle */}
-      <div className="bg-white rounded-2xl border p-6">
-        <h2 className="font-bold text-lg mb-4">Appearance</h2>
-        <div className="flex gap-3">
-          {modeOptions.map(opt => {
-            const Icon = opt.icon;
-            const isActive = mode === opt.id;
-            return (
-              <button
-                key={opt.id}
-                onClick={() => saveMode(opt.id)}
-                className={cn(
-                  'flex items-center gap-2 px-5 py-3 rounded-xl border-2 font-semibold text-sm transition-all',
-                  isActive
-                    ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
-                )}
-              >
-                <Icon size={18} />
-                {opt.label}
-              </button>
-            );
-          })}
+      <AnimatedCard delay={0.1}>
+        <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6">
+          <h2 className="font-bold text-lg text-[var(--color-text)] mb-4">Appearance</h2>
+          <div className="flex gap-3">
+            {modeOptions.map(opt => {
+              const Icon = opt.icon;
+              const isActive = mode === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => saveMode(opt.id)}
+                  className={cn(
+                    'flex items-center gap-2 px-5 py-3 rounded-xl border-2 font-semibold text-sm transition-all',
+                    isActive
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400 shadow-sm'
+                      : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-primary-300 dark:hover:border-primary-500/50 hover:bg-[var(--color-surface-elevated)]'
+                  )}
+                >
+                  <Icon size={18} />
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-[var(--color-text-muted)] mt-3">Auto follows your device&apos;s light/dark setting.</p>
         </div>
-        <p className="text-xs text-gray-400 mt-3">Auto follows your device&apos;s light/dark setting.</p>
-      </div>
+      </AnimatedCard>
 
       {/* Seasonal Themes */}
-      <div>
-        <h2 className="font-bold text-lg mb-4">Seasonal Themes</h2>
+      <AnimatedCard delay={0.2}>
+        <h2 className="font-bold text-lg text-[var(--color-text)] mb-4">Seasonal Themes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {themeList.map(theme => {
             const isActive = activeTheme.id === theme.id;
@@ -109,8 +112,8 @@ export default function ThemePage() {
                 className={cn(
                   'text-left rounded-2xl border-2 p-5 transition-all',
                   isActive
-                    ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 ring-2 ring-primary-200 dark:ring-primary-500/30'
+                    : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-primary-300 dark:hover:border-primary-500/50 hover:shadow-md'
                 )}
               >
                 <div className="flex items-center gap-3 mb-3">
@@ -121,28 +124,28 @@ export default function ThemePage() {
                     <Icon size={20} style={{ color: theme.primary }} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">{theme.name}</h3>
+                    <h3 className="font-bold text-[var(--color-text)]">{theme.name}</h3>
                     {isActive && (
-                      <span className="text-xs font-semibold text-primary-600">Active</span>
+                      <span className="text-xs font-semibold text-primary-600 dark:text-primary-400">Active</span>
                     )}
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-500 mb-3">{theme.description}</p>
+                <p className="text-sm text-[var(--color-text-muted)] mb-3">{theme.description}</p>
 
                 <div className="flex gap-2">
-                  <span className="w-6 h-6 rounded-full border border-gray-200" style={{ backgroundColor: theme.primary }} title="Primary" />
-                  <span className="w-6 h-6 rounded-full border border-gray-200" style={{ backgroundColor: theme.secondary }} title="Secondary" />
-                  <span className="w-6 h-6 rounded-full border border-gray-200" style={{ backgroundColor: theme.accent }} title="Accent" />
+                  <span className="w-6 h-6 rounded-full border border-[var(--color-border)]" style={{ backgroundColor: theme.primary }} title="Primary" />
+                  <span className="w-6 h-6 rounded-full border border-[var(--color-border)]" style={{ backgroundColor: theme.secondary }} title="Secondary" />
+                  <span className="w-6 h-6 rounded-full border border-[var(--color-border)]" style={{ backgroundColor: theme.accent }} title="Accent" />
                   {theme.discountPercent > 0 && (
-                    <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">
+                    <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400">
                       {theme.discountPercent}% off
                     </span>
                   )}
                 </div>
 
                 {theme.bannerText && (
-                  <div className="mt-3 text-xs text-gray-400">
+                  <div className="mt-3 text-xs text-[var(--color-text-muted)]">
                     Banner: &ldquo;{theme.bannerText} &mdash; {theme.bannerSubtext}&rdquo;
                   </div>
                 )}
@@ -150,7 +153,7 @@ export default function ThemePage() {
             );
           })}
         </div>
-      </div>
+      </AnimatedCard>
     </div>
   );
 }

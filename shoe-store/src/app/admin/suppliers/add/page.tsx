@@ -1,31 +1,30 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
 export default function AddSupplierPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: '',
     contactName: '',
     phone: '',
     email: '',
     location: '',
-    paymentTerms: 'mpesa',
     notes: '',
   });
 
+  function updateField(field: string, value: string) {
+    setForm(prev => ({ ...prev, [field]: value }));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setSaving(true);
 
     try {
       const res = await fetch('/api/admin/suppliers', {
@@ -34,87 +33,72 @@ export default function AddSupplierPage() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || 'Failed to create supplier');
+      }
 
+      toast.success('Supplier created');
       router.push('/admin/suppliers');
       router.refresh();
     } catch (err) {
-      setError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   }
 
   return (
-    <div className="max-w-lg animate-fade-in">
-      <h1 className="text-2xl font-bold mb-6">Add Supplier</h1>
+    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
+      <div className="flex items-center gap-3">
+        <button onClick={() => router.back()} className="p-2 hover:bg-[var(--color-surface-elevated)] rounded-lg transition-colors text-[var(--color-text-muted)]">
+          ←
+        </button>
+        <h1 className="text-2xl font-bold text-[var(--color-text)]">Add Supplier</h1>
+      </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white rounded-xl border p-6">
+      <form onSubmit={handleSubmit} className="bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] p-6 space-y-4">
         <Input
-          label="Name / Business Name"
+          label="Supplier Name"
           value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-          placeholder="e.g., Nairobi Sneaker Source"
+          onChange={e => updateField('name', e.target.value)}
+          required
         />
 
         <Input
           label="Contact Name"
           value={form.contactName}
-          onChange={e => setForm({ ...form, contactName: e.target.value })}
-          placeholder="e.g., Alex Mutua"
+          onChange={e => updateField('contactName', e.target.value)}
         />
 
-        <Input
-          label="Phone"
-          type="tel"
-          value={form.phone}
-          onChange={e => setForm({ ...form, phone: e.target.value })}
-          placeholder="07XX XXX XXX"
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="Phone"
+            value={form.phone}
+            onChange={e => updateField('phone', e.target.value)}
+          />
+          <Input
+            label="Email"
+            type="email"
+            value={form.email}
+            onChange={e => updateField('email', e.target.value)}
+          />
+        </div>
 
         <Input
-          label="Email"
-          type="email"
-          value={form.email}
-          onChange={e => setForm({ ...form, email: e.target.value })}
-          placeholder="supplier@example.com"
-        />
-
-        <Input
-          label="Location (Nairobi Area)"
+          label="Location"
           value={form.location}
-          onChange={e => setForm({ ...form, location: e.target.value })}
-          placeholder="CBD, Westlands, etc."
+          onChange={e => updateField('location', e.target.value)}
         />
 
-        <Select
-          label="Payment Terms"
-          value={form.paymentTerms}
-          onChange={e => setForm({ ...form, paymentTerms: e.target.value })}
-          options={[
-            { value: 'mpesa', label: 'M-Pesa (Weekly)' },
-            { value: 'bank', label: 'Bank Transfer' },
-            { value: 'cash', label: 'Cash' },
-            { value: 'net15', label: 'Net 15 Days' },
-            { value: 'net30', label: 'Net 30 Days' },
-            { value: 'consignment', label: 'Consignment (pay after sale)' },
-          ]}
-        />
-
-        <Textarea
+        <Input
           label="Notes"
           value={form.notes}
-          onChange={e => setForm({ ...form, notes: e.target.value })}
+          onChange={e => updateField('notes', e.target.value)}
         />
 
-        <Button type="submit" loading={loading} className="w-full" size="lg">
-          Add Supplier
+        <Button type="submit" loading={saving} className="w-full" size="lg">
+          Create Supplier
         </Button>
       </form>
     </div>
