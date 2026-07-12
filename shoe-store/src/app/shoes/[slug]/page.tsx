@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: PageProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
       {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-gray-500" aria-label="Breadcrumb">
+      <nav className="mb-6 text-sm text-[var(--color-text-muted)]" aria-label="Breadcrumb">
         <ol className="flex flex-wrap items-center gap-2">
           <li><Link href="/" className="hover:text-primary-600">Home</Link></li>
           <li>/</li>
@@ -80,7 +80,7 @@ export default async function ProductPage({ params }: PageProps) {
             </Link>
           </li>
           <li>/</li>
-          <li aria-current="page" className="text-gray-900 font-medium truncate">{product.name}</li>
+          <li aria-current="page" className="text-[var(--color-text)] font-medium truncate">{product.name}</li>
         </ol>
       </nav>
 
@@ -97,7 +97,7 @@ export default async function ProductPage({ params }: PageProps) {
               {images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                   {images.slice(1, 5).map((img, i) => (
-                    <div key={i} className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 hover:border-primary-500 cursor-pointer transition-colors">
+                    <div key={i} className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-[var(--color-surface-elevated)] border border-[var(--color-border)] hover:border-primary-500 cursor-pointer transition-colors">
                       <Image src={img} alt={`${product.name} view ${i + 2}`} fill className="object-cover" sizes="80px" />
                     </div>
                   ))}
@@ -105,8 +105,8 @@ export default async function ProductPage({ params }: PageProps) {
               )}
             </>
           ) : (
-            <div className="aspect-square rounded-xl bg-gray-50 flex items-center justify-center">
-              <p className="text-gray-400">No image available</p>
+            <div className="aspect-square rounded-xl bg-[var(--color-surface-elevated)] flex items-center justify-center">
+              <p className="text-[var(--color-text-muted)]">No image available</p>
             </div>
           )}
         </div>
@@ -116,9 +116,9 @@ export default async function ProductPage({ params }: PageProps) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-sm font-medium text-primary-600 uppercase tracking-wide">{product.brand}</span>
-              <span className="text-sm text-gray-500 capitalize">· {product.category}</span>
+              <span className="text-sm text-[var(--color-text-muted)] capitalize">· {product.category}</span>
               {product.onSale && product.salePrice && (
-                <span className="inline-flex items-center gap-1 bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 text-xs font-bold px-2 py-0.5 rounded-full">
                   SALE
                 </span>
               )}
@@ -127,14 +127,14 @@ export default async function ProductPage({ params }: PageProps) {
             <div className="flex items-center gap-3 mt-2">
               {product.onSale && product.salePrice ? (
                 <>
-                  <p className="text-3xl font-bold text-red-600">{formatPrice(product.salePrice)}</p>
-                  <p className="text-xl text-gray-400 line-through">{formatPrice(product.basePrice)}</p>
-                  <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
+                  <p className="text-3xl font-bold text-red-600 dark:text-red-400">{formatPrice(product.salePrice)}</p>
+                  <p className="text-xl text-[var(--color-text-muted)] line-through">{formatPrice(product.basePrice)}</p>
+                  <span className="text-sm font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded">
                     {Math.round(((product.basePrice - product.salePrice) / product.basePrice) * 100)}% OFF
                   </span>
                 </>
               ) : (
-                <p className="text-3xl font-bold text-gray-900">{formatPrice(product.basePrice)}</p>
+                <p className="text-3xl font-bold text-[var(--color-text)]">{formatPrice(product.basePrice)}</p>
               )}
             </div>
           </div>
@@ -142,14 +142,14 @@ export default async function ProductPage({ params }: PageProps) {
           {/* Stock Status */}
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${inStock ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span className={`text-sm font-medium ${inStock ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-sm font-medium ${inStock ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {inStock ? 'In Stock' : 'Out of Stock'}
             </span>
           </div>
 
           {product.description && (
             <div>
-              <h3 className="font-medium mb-2">Description</h3>
+              <h3 className="font-medium mb-2 text-[var(--color-text)]">Description</h3>
               <p className="text-body">{product.description}</p>
             </div>
           )}
@@ -176,14 +176,14 @@ export default async function ProductPage({ params }: PageProps) {
           />
 
           {/* Delivery Info */}
-          <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+          <div className="bg-[var(--color-surface-elevated)] rounded-xl p-4 space-y-2">
             <div className="flex items-start gap-3">
               <svg className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               <div>
-                <p className="font-medium text-sm">Fast Nairobi Delivery</p>
-                <p className="text-xs text-gray-500">Same/next day delivery via Uber Boda within Nairobi.</p>
+                <p className="font-medium text-sm text-[var(--color-text)]">Fast Nairobi Delivery</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Same/next day delivery via Uber Boda within Nairobi.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -191,8 +191,8 @@ export default async function ProductPage({ params }: PageProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               <div>
-                <p className="font-medium text-sm">Cash on Delivery Available</p>
-                <p className="text-xs text-gray-500">Pay when your shoes arrive. M-Pesa & cards also accepted online.</p>
+                <p className="font-medium text-sm text-[var(--color-text)]">Cash on Delivery Available</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Pay when your shoes arrive. M-Pesa & cards also accepted online.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -200,8 +200,8 @@ export default async function ProductPage({ params }: PageProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               <div>
-                <p className="font-medium text-sm">Easy Returns</p>
-                <p className="text-xs text-gray-500">Not the right fit? Free exchanges within Nairobi.</p>
+                <p className="font-medium text-sm text-[var(--color-text)]">Easy Returns</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Not the right fit? Free exchanges within Nairobi.</p>
               </div>
             </div>
           </div>

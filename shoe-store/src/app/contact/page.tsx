@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
-      <nav className="mb-8 text-sm text-gray-500">
+      <nav className="mb-8 text-sm text-[var(--color-text-muted)]">
         <Link href="/" className="hover:text-[var(--color-primary)]">Home</Link>
         <span className="mx-2">/</span>
-        <span className="text-gray-900 font-medium">Contact Us</span>
+        <span className="text-[var(--color-text)] font-medium">Contact Us</span>
       </nav>
 
       <h1 className="heading-1 mb-4">Contact Us</h1>
@@ -26,56 +26,56 @@ export default function ContactPage() {
             href="https://wa.me/254700000000"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-4 bg-white rounded-2xl border p-5 hover:shadow-lg transition-all group"
+            className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 hover:shadow-lg transition-all group"
           >
-            <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <MessageCircle size={22} className="text-green-600" />
+            <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <MessageCircle size={22} className="text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <h3 className="font-bold text-gray-900">WhatsApp</h3>
-              <p className="text-sm text-gray-500">+254 700 000 000</p>
+              <h3 className="font-bold text-[var(--color-text)]">WhatsApp</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">+254 700 000 000</p>
             </div>
           </a>
 
           <a
             href="tel:+254700000000"
-            className="flex items-center gap-4 bg-white rounded-2xl border p-5 hover:shadow-lg transition-all group"
+            className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 hover:shadow-lg transition-all group"
           >
-            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Phone size={22} className="text-blue-600" />
+            <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Phone size={22} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="font-bold text-gray-900">Call Us</h3>
-              <p className="text-sm text-gray-500">+254 700 000 000</p>
+              <h3 className="font-bold text-[var(--color-text)]">Call Us</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">+254 700 000 000</p>
             </div>
           </a>
 
           <a
             href="mailto:hello@shoestore.ke"
-            className="flex items-center gap-4 bg-white rounded-2xl border p-5 hover:shadow-lg transition-all group"
+            className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 hover:shadow-lg transition-all group"
           >
-            <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Mail size={22} className="text-purple-600" />
+            <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Mail size={22} className="text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h3 className="font-bold text-gray-900">Email</h3>
-              <p className="text-sm text-gray-500">hello@shoestore.ke</p>
+              <h3 className="font-bold text-[var(--color-text)]">Email</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">hello@shoestore.ke</p>
             </div>
           </a>
 
-          <div className="flex items-center gap-4 bg-white rounded-2xl border p-5">
-            <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
-              <MapPin size={22} className="text-orange-600" />
+          <div className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5">
+            <div className="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center">
+              <MapPin size={22} className="text-orange-600 dark:text-orange-400" />
             </div>
             <div>
-              <h3 className="font-bold text-gray-900">Location</h3>
-              <p className="text-sm text-gray-500">Nairobi, Kenya</p>
+              <h3 className="font-bold text-[var(--color-text)]">Location</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">Nairobi, Kenya</p>
             </div>
           </div>
         </div>
 
         {/* Contact Form */}
-        <div className="bg-white rounded-2xl border p-6">
+        <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6">
           <h2 className="heading-3 mb-5">Send a Message</h2>
           <form className="space-y-4">
             <div>

@@ -66,7 +66,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       {/* Colors */}
       {allColors.length > 0 && (
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2.5 font-[var(--font-heading)]">
+          <label className="block text-sm font-semibold text-[var(--color-text)] mb-2.5 font-[var(--font-heading)]">
             Color: <span className="text-primary-600">{selectedColor || 'Select'}</span>
           </label>
           <div className="flex flex-wrap gap-2">
@@ -85,10 +85,10 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                   className={cn(
                     'flex items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-colors',
                     isSelected
-                      ? 'border-primary-600 bg-primary-50 text-primary-700'
+                      ? 'border-primary-600 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400'
                       : hasStock
-                      ? 'border-gray-200 hover:border-gray-400 text-gray-700'
-                      : 'border-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                      ? 'border-[var(--color-border)] hover:border-gray-400 dark:hover:border-gray-500 text-[var(--color-text)]'
+                      : 'border-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed opacity-50'
                   )}
                   disabled={!hasStock}
                   whileTap={hasStock ? { scale: 0.95 } : undefined}
@@ -97,7 +97,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                 >
                   {variant?.colorHex && (
                     <motion.span
-                      className="w-5 h-5 rounded-full border-2 border-gray-200 flex-shrink-0"
+                      className="w-5 h-5 rounded-full border-2 border-[var(--color-border)] flex-shrink-0"
                       style={{ backgroundColor: variant.colorHex }}
                       animate={isSelected ? { scale: [1, 1.2, 1] } : {}}
                       transition={{ duration: 0.3 }}
@@ -115,7 +115,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       {/* Sizes */}
       {allSizes.length > 0 && (
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2.5 font-[var(--font-heading)]">
+          <label className="block text-sm font-semibold text-[var(--color-text)] mb-2.5 font-[var(--font-heading)]">
             Size: <span className="text-primary-600">{selectedSize || 'Select'}</span>
           </label>
           <div className="flex flex-wrap gap-2">
@@ -140,10 +140,10 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
                   className={cn(
                     'px-4 py-2.5 rounded-xl border-2 text-sm font-bold transition-colors min-w-[52px] relative',
                     isSelected
-                      ? 'border-primary-600 bg-primary-50 text-primary-700'
+                      ? 'border-primary-600 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400'
                       : isAvailable
-                      ? 'border-gray-200 hover:border-gray-400 text-gray-700'
-                      : 'border-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                      ? 'border-[var(--color-border)] hover:border-gray-400 dark:hover:border-gray-500 text-[var(--color-text)]'
+                      : 'border-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed opacity-50'
                   )}
                   disabled={!isAvailable}
                   whileTap={isAvailable ? { scale: 0.9 } : undefined}
@@ -177,7 +177,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="text-secondary-600 text-sm font-semibold"
+            className="text-secondary-600 dark:text-secondary-400 text-sm font-semibold"
           >
             This combination is sold out.
           </motion.p>
@@ -185,13 +185,13 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
       </AnimatePresence>
 
       {/* Add to Cart */}
-      <div className="flex gap-4 pt-4 border-t border-gray-100">
+      <div className="flex gap-4 pt-4 border-t border-[var(--color-border)]">
         <MagneticButton
           variant="primary"
           size="lg"
           className={cn(
             'flex-1 !py-3.5',
-            !canAdd && '!bg-gray-200 !text-gray-500 cursor-not-allowed',
+            !canAdd && '!bg-gray-200 dark:!bg-gray-700 !text-gray-500 dark:!text-gray-400 cursor-not-allowed',
             added && '!bg-green-500'
           )}
           disabled={!canAdd}
@@ -228,7 +228,7 @@ export function AddToCartForm({ product, variants, allColors, allSizes, inStock 
           <motion.span
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-sm text-green-600 self-center font-semibold"
+            className="text-sm text-green-600 dark:text-green-400 self-center font-semibold"
           >
             {selectedVariant.stock > 10 ? 'In stock' : `${selectedVariant.stock} left`}
           </motion.span>

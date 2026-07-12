@@ -53,7 +53,7 @@ export function ProductImageTilt({ src, alt, inStock, outOfStockLabel = 'Out of 
   return (
     <motion.div
       ref={ref}
-      className="relative rounded-2xl overflow-hidden bg-gray-50 cursor-crosshair"
+      className="relative rounded-2xl overflow-hidden bg-[var(--color-surface-elevated)] cursor-crosshair"
       style={{ perspective: 800 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setHovered(true)}

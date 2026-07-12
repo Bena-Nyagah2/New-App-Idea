@@ -79,12 +79,12 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-100 last:border-0">
+    <div className="border-b border-[var(--color-border)] last:border-0">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-4 text-left group"
       >
-        <span className="font-medium text-gray-900 group-hover:text-[var(--color-primary)] transition-colors pr-4">
+        <span className="font-medium text-[var(--color-text)] group-hover:text-[var(--color-primary)] transition-colors pr-4">
           {question}
         </span>
         <motion.span
@@ -92,7 +92,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
           transition={{ duration: 0.2 }}
           className="flex-shrink-0"
         >
-          <ChevronDown size={18} className="text-gray-400" />
+          <ChevronDown size={18} className="text-[var(--color-text-muted)]" />
         </motion.span>
       </button>
       <AnimatePresence>
@@ -104,7 +104,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <p className="text-gray-600 text-sm leading-relaxed pb-4">{answer}</p>
+            <p className="text-[var(--color-text-muted)] text-sm leading-relaxed pb-4">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -127,7 +127,7 @@ export function FaqClient() {
         {faqSections.map(section => (
           <div key={section.title}>
             <h2 className="heading-3 mb-4">{section.title}</h2>
-            <div className="bg-white rounded-2xl border px-6">
+            <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] px-6">
               {section.items.map(item => (
                 <FaqItem key={item.q} question={item.q} answer={item.a} />
               ))}
@@ -136,8 +136,8 @@ export function FaqClient() {
         ))}
       </div>
 
-      <div className="mt-12 text-center bg-white rounded-2xl border p-8">
-        <p className="text-gray-600 mb-4">Still have questions?</p>
+      <div className="mt-12 text-center bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-8">
+        <p className="text-[var(--color-text-muted)] mb-4">Still have questions?</p>
         <a
           href="https://wa.me/254700000000"
           target="_blank"
