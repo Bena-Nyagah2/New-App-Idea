@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
@@ -10,8 +9,7 @@ import { HomeHeroSection } from './hero-section';
 import { TrustIndicators } from './trust-indicators';
 import { CategoryCard } from './category-card';
 import { BrandMarquee } from './brand-marquee';
-import { Tag } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AnimatedTag } from '@/components/ui/animated-tag';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -142,12 +140,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <motion.div
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  <Tag className="text-red-500" size={28} />
-                </motion.div>
+                <AnimatedTag />
                 <div>
                   <h2 className="heading-2 text-red-700">Hot Deals</h2>
                   <p className="text-body text-red-600">Don&apos;t miss these limited offers</p>
