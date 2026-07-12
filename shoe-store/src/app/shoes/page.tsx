@@ -3,7 +3,7 @@ import { products } from '@/lib/db/schema';
 import { eq, and, like, desc, sql, gte, lte } from 'drizzle-orm';
 import { ProductCard } from '@/components/product-card';
 import { SortDropdown } from '@/components/sort-dropdown';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, parseJsonSafe } from '@/lib/utils';
 import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
@@ -238,7 +238,7 @@ export default async function ShoesPage({ searchParams }: PageProps) {
                     brand: product.brand,
                     category: product.category,
                     basePrice: product.basePrice,
-                    images: JSON.parse(product.images || '[]'),
+                    images: parseJsonSafe(product.images, []),
                   }}
                 />
               ))}

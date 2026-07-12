@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { CATEGORIES, BRANDS, SIZES_EU } from '@/lib/validations';
+import { parseJsonSafe } from '@/lib/utils';
 
 interface VariantForm {
   id?: string;
@@ -55,7 +56,7 @@ export default function EditProductPage() {
           basePrice: String((p.basePrice || 0) / 100),
           onSale: p.onSale ?? false,
           salePrice: p.salePrice ? String(p.salePrice / 100) : '',
-          images: (JSON.parse(p.images || '[]')).join(', '),
+          images: (parseJsonSafe(p.images, []) as string[]).join(', '),
           isActive: p.isActive ?? true,
         });
         setVariants(

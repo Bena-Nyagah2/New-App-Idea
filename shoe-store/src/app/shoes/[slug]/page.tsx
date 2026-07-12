@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products, variants } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, parseJsonSafe } from '@/lib/utils';
 import { AddToCartForm } from './add-to-cart-form';
 import { ProductImageTilt } from './product-image-tilt';
 import Link from 'next/link';
@@ -34,11 +34,8 @@ async function getRelatedProducts(category: string, excludeId: string) {
 }
 
 function parseImages(imagesJson: string): string[] {
-  try {
-    return JSON.parse(imagesJson);
-  } catch {
-    return [];
-  }
+  const result = parseJsonSafe(imagesJson, []);
+  return Array.isArray(result) ? result : [];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { products, variants } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, parseJsonSafe } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductActions } from './product-actions';
@@ -39,7 +39,7 @@ export default async function InventoryPage() {
           {productsList.map(async (product) => {
             const productVariants = await getVariantsForProduct(product.id);
             const totalStock = productVariants.reduce((sum, v) => sum + v.stock, 0);
-            const images = JSON.parse(product.images || '[]');
+            const images = parseJsonSafe(product.images, []);
             
             return (
               <div key={product.id} className="bg-white rounded-2xl border overflow-hidden card-3d">

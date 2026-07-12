@@ -5,13 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(amount: number, currency = 'KES'): string {
+export function formatPrice(amount: number | null | undefined, currency = 'KES'): string {
+  const safe = typeof amount === 'number' && isFinite(amount) ? amount : 0;
   return new Intl.NumberFormat('en-KE', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount / 100);
+  }).format(safe / 100);
 }
 
 export function formatPriceCompact(amount: number, currency = 'KES'): string {
@@ -94,7 +95,8 @@ export function getZoneForArea(area: string) {
   return { zoneKey: 'outer', ...zones.outer };
 }
 
-export function parseJsonSafe<T>(json: string, fallback: T): T {
+export function parseJsonSafe<T>(json: unknown, fallback: T): T {
+  if (typeof json !== 'string') return fallback;
   try {
     return JSON.parse(json);
   } catch {

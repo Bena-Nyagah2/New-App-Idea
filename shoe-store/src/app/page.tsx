@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, parseJsonSafe } from '@/lib/utils';
 import { ProductCard } from '@/components/product-card';
 import { HomeHeroSection } from './hero-section';
 import { TrustIndicators } from './trust-indicators';
@@ -19,36 +19,57 @@ export const metadata: Metadata = {
   description: 'Shop the latest running, lifestyle, and basketball shoes. Fast delivery in Nairobi via Uber Boda. Pay online or cash on delivery.',
 };
 
+function safeJsonArray(input: unknown): string[] {
+  const result = parseJsonSafe(input, []);
+  return Array.isArray(result) ? result : [];
+}
+
 async function getFeaturedProducts() {
-  return db
-    .select()
-    .from(products)
-    .where(eq(products.isActive, true))
-    .orderBy(desc(products.createdAt))
-    .limit(8);
+  try {
+    return await db
+      .select()
+      .from(products)
+      .where(eq(products.isActive, true))
+      .orderBy(desc(products.createdAt))
+      .limit(8);
+  } catch {
+    return [];
+  }
 }
 
 async function getCategories() {
-  return db
-    .selectDistinct({ category: products.category })
-    .from(products)
-    .where(eq(products.isActive, true));
+  try {
+    return await db
+      .selectDistinct({ category: products.category })
+      .from(products)
+      .where(eq(products.isActive, true));
+  } catch {
+    return [];
+  }
 }
 
 async function getBrands() {
-  return db
-    .selectDistinct({ brand: products.brand })
-    .from(products)
-    .where(eq(products.isActive, true));
+  try {
+    return await db
+      .selectDistinct({ brand: products.brand })
+      .from(products)
+      .where(eq(products.isActive, true));
+  } catch {
+    return [];
+  }
 }
 
 async function getSaleProducts() {
-  return db
-    .select()
-    .from(products)
-    .where(and(eq(products.isActive, true), eq(products.onSale, true)))
-    .orderBy(desc(products.updatedAt))
-    .limit(4);
+  try {
+    return await db
+      .select()
+      .from(products)
+      .where(and(eq(products.isActive, true), eq(products.onSale, true)))
+      .orderBy(desc(products.updatedAt))
+      .limit(4);
+  } catch {
+    return [];
+  }
 }
 
 export default async function HomePage() {
@@ -60,7 +81,7 @@ export default async function HomePage() {
   ]);
 
   const heroProduct = featuredProducts[0];
-  const heroImages = heroProduct ? JSON.parse(heroProduct.images || '[]') : [];
+  const heroImages = heroProduct ? safeJsonArray(heroProduct.images) : [];
   const heroImage = heroImages[0] || '/placeholder.svg';
 
   return (
@@ -98,7 +119,7 @@ export default async function HomePage() {
                     ...product,
                     slug: product.id,
                     basePrice: product.basePrice,
-                    images: JSON.parse(product.images || '[]'),
+                    images: safeJsonArray(product.images),
                   }}
                 />
               ))}
@@ -144,7 +165,7 @@ export default async function HomePage() {
                     ...product,
                     slug: product.id,
                     basePrice: product.basePrice,
-                    images: JSON.parse(product.images || '[]'),
+                    images: safeJsonArray(product.images),
                   }}
                 />
               ))}
