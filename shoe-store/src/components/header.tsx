@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, ShoppingBag, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { ThemeToggle } from './theme-toggle';
 
 const navLinks = [
   { href: '/shoes', label: 'Shop' },
@@ -61,6 +62,8 @@ export function Header() {
             >
               Shop All
             </Link>
+
+            <ThemeToggle />
 
             <motion.button
               onClick={() => useCartStore.getState().toggleCart()}

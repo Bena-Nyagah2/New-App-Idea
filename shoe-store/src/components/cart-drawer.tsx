@@ -142,9 +142,10 @@ export function CartDrawer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col md:flex-row">
+        <>
+          {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -152,8 +153,9 @@ export function CartDrawer() {
             aria-hidden="true"
           />
 
+          {/* Drawer panel */}
           <motion.aside
-            className="relative h-full md:ml-auto md:max-w-md w-full bg-[var(--color-surface)] flex flex-col shadow-2xl border-l border-[var(--color-border)]"
+            className="fixed top-0 right-0 z-50 h-[100dvh] w-full max-w-md bg-[var(--color-surface)] flex flex-col shadow-2xl border-l border-[var(--color-border)]"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -206,7 +208,7 @@ export function CartDrawer() {
             </div>
 
             {/* Items */}
-            <div className="flex-1 overflow-y-auto px-6 py-4">
+            <div className="flex-1 overflow-y-auto min-h-0 px-6 py-4">
               {items.length === 0 ? (
                 <div className="text-center py-16">
                   <motion.div
@@ -283,7 +285,7 @@ export function CartDrawer() {
               </motion.div>
             )}
           </motion.aside>
-        </div>
+        </>
       )}
     </AnimatePresence>
   );

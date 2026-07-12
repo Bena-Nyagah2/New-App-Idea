@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { WhatsAppIcon, InstagramIcon, FacebookIcon } from '@/components/icons/social-icons';
-import { MapPin, Phone, Mail, ArrowUpRight } from 'lucide-react';
+import { MapPin, Phone, Mail, ArrowUpRight, Footprints, CircleDot, Sofa, Volleyball, HelpCircle, MessageCircle, TruckIcon, RotateCcw } from 'lucide-react';
 
 const socialLinks = [
   {
@@ -27,17 +27,17 @@ const socialLinks = [
 ];
 
 const quickLinks = [
-  { href: '/shoes', label: 'All Shoes' },
-  { href: '/shoes?category=running', label: 'Running' },
-  { href: '/shoes?category=lifestyle', label: 'Lifestyle' },
-  { href: '/shoes?category=basketball', label: 'Basketball' },
+  { href: '/shoes', label: 'All Shoes', icon: Footprints },
+  { href: '/shoes?category=running', label: 'Running', icon: CircleDot },
+  { href: '/shoes?category=lifestyle', label: 'Lifestyle', icon: Sofa },
+  { href: '/shoes?category=basketball', label: 'Basketball', icon: Volleyball },
 ];
 
 const supportLinks = [
-  { href: '/contact', label: 'Contact Us' },
-  { href: '/delivery-info', label: 'Delivery Info' },
-  { href: '/returns', label: 'Returns' },
-  { href: '/faq', label: 'FAQ' },
+  { href: '/contact', label: 'Contact Us', icon: MessageCircle },
+  { href: '/delivery-info', label: 'Delivery Info', icon: TruckIcon },
+  { href: '/returns', label: 'Returns', icon: RotateCcw },
+  { href: '/faq', label: 'FAQ', icon: HelpCircle },
 ];
 
 export function Footer() {
@@ -76,40 +76,48 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-[var(--color-text)] mb-4 font-[var(--font-heading)]">Quick Links</h3>
             <ul className="space-y-2.5">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm hover:text-primary-500 transition-colors inline-flex items-center gap-1 group"
-                  >
-                    {link.label}
-                    <ArrowUpRight
-                      size={12}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                  </Link>
-                </li>
-              ))}
+              {quickLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm hover:text-primary-500 transition-colors inline-flex items-center gap-1.5 group"
+                    >
+                      <Icon size={14} className="text-[var(--color-text-muted)] group-hover:text-primary-500 transition-colors" />
+                      {link.label}
+                      <ArrowUpRight
+                        size={12}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
           <div>
             <h3 className="font-bold text-[var(--color-text)] mb-4 font-[var(--font-heading)]">Support</h3>
             <ul className="space-y-2.5">
-              {supportLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm hover:text-primary-500 transition-colors inline-flex items-center gap-1 group"
-                  >
-                    {link.label}
-                    <ArrowUpRight
-                      size={12}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                  </Link>
-                </li>
-              ))}
+              {supportLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm hover:text-primary-500 transition-colors inline-flex items-center gap-1.5 group"
+                    >
+                      <Icon size={14} className="text-[var(--color-text-muted)] group-hover:text-primary-500 transition-colors" />
+                      {link.label}
+                      <ArrowUpRight
+                        size={12}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
