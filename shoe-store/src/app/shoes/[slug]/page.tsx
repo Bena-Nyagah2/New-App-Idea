@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products, variants } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -100,7 +101,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                   {images.slice(1, 5).map((img, i) => (
                     <div key={i} className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 border border-gray-200 hover:border-primary-500 cursor-pointer transition-colors">
-                      <img src={img} alt={`${product.name} view ${i + 2}`} className="w-full h-full object-cover" loading="lazy" />
+                      <Image src={img} alt={`${product.name} view ${i + 2}`} fill className="object-cover" sizes="80px" />
                     </div>
                   ))}
                 </div>

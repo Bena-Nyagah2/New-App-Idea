@@ -1,3 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
-  <text x="60" y="20" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#c41e3a" text-anchor="middle" dominant-baseline="central">Jordan</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <path d="M50 6C48 6 46 7 45.5 8.5C45 10 46 11 47 11.5L53 14L55 8C55 8 52.5 6 50 6Z" fill="currentColor"/>
+  <path d="M47 11.5L39 28H44L46 22H53L50 30H68L72 20L60 20L47 11.5Z" fill="currentColor"/>
+  <path d="M35 15C33 15 31 16.5 31 18.5C31 20.5 32 21 33 21.5L27 36H33L36 28L40 36H46L40 21C38.5 21 37 19.5 37 18C37 16.5 36 15.5 35 15Z" fill="currentColor"/>
+  <text x="74" y="24" font-size="8.5" fill="currentColor" font-weight="700" font-family="Arial">Jordan</text>
 </svg>

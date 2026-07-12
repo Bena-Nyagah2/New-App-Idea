@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
-  <text x="60" y="20" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#003da5" text-anchor="middle" dominant-baseline="central">ASICS</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <path d="M18 10L10 30H14L16 25H20L22 30H26L18 10ZM15 22L17 16L19 22H15Z" fill="currentColor"/>
+  <path d="M30 10L28 16H26L24 10H20L26 30H30L32 24H34L36 30H40L34 10H30ZM30.5 19L32.5 12L34.5 19H30.5Z" fill="currentColor"/>
+  <text x="42" y="26" font-size="12" fill="currentColor" font-weight="800" font-family="Arial" letter-spacing="1">asics</text>
 </svg>

@@ -145,11 +145,7 @@ export default async function AdminDashboardPage() {
                       {formatPrice(order.total)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                        order.paymentStatus === 'paid'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}>
+                      <span className={`badge ${order.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}`}>
                         {order.paymentMethod === 'paystack' ? 'Online' : 'COD'} · {order.paymentStatus}
                       </span>
                     </td>

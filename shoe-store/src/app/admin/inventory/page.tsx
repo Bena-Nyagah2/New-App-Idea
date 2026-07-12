@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { products, variants } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ProductActions } from './product-actions';
 export const dynamic = 'force-dynamic';
@@ -46,7 +47,7 @@ export default async function InventoryPage() {
                   {/* Image */}
                   <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0">
                     {images[0] && (
-                      <img src={images[0]} alt={product.name} className="w-full h-full object-cover" />
+                      <Image src={images[0]} alt={product.name} width={80} height={80} className="w-full h-full object-cover" />
                     )}
                   </div>
                   <div className="flex-1">

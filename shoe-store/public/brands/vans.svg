@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
-  <text x="60" y="20" font-family="Georgia, serif" font-size="14" font-weight="bold" font-style="italic" fill="#000000" text-anchor="middle" dominant-baseline="central">Vans</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <path d="M10 32L22 10L26 20L30 10H34L38 20L42 10H46L34 32H30L26 22L22 32H10Z" fill="currentColor"/>
+  <path d="M14 34L44 14L46 18L48 14H52L42 36H38L34 26L30 36H14Z" fill="currentColor" opacity="0.3"/>
+  <text x="55" y="26" font-size="12" fill="currentColor" font-weight="800" font-family="Arial" font-style="italic">Vans</text>
 </svg>

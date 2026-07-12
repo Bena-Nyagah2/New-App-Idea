@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
-  <text x="60" y="20" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle" dominant-baseline="central">PUMA</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <path d="M20 30C20 30 16 26 16 22C16 18 20 16 20 16L28 10C28 10 24 8 22 8C18 8 15 12 15 16C15 18 14 20 12 22C10 24 6 26 6 28L14 32C14 32 14 34 16 34C18 34 20 30 20 30Z" fill="currentColor"/>
+  <path d="M35 10C35 10 30 18 30 22C30 26 33 32 38 32L42 16L44 10H35Z" fill="currentColor"/>
+  <text x="50" y="28" font-size="14" fill="currentColor" font-weight="800" font-family="Arial">PUMA</text>
 </svg>

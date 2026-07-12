@@ -42,21 +42,19 @@ const supportLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-auto">
+    <footer className="bg-[var(--color-surface)] text-[var(--color-text-muted)] mt-auto border-t border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-xl font-bold text-white font-[var(--font-heading)] group-hover:text-primary-400 transition-colors">
+              <span className="text-xl font-bold text-[var(--color-text)] font-[var(--font-heading)] group-hover:text-primary-500 transition-colors">
                 Shoe Store
               </span>
             </Link>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm leading-relaxed">
               Quality shoes at great prices. Nairobi&apos;s favorite shoe store.
             </p>
 
-            {/* Social Links */}
             <div className="flex gap-3 pt-2">
               {socialLinks.map((social) => (
                 <motion.a
@@ -65,7 +63,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className={`w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white ${social.hoverColor} transition-all duration-200`}
+                  className={`w-10 h-10 rounded-xl bg-[var(--color-surface-elevated)] flex items-center justify-center text-[var(--color-text-muted)] hover:text-white ${social.hoverColor} transition-all duration-200`}
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -75,15 +73,14 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-white mb-4 font-[var(--font-heading)]">Quick Links</h3>
+            <h3 className="font-bold text-[var(--color-text)] mb-4 font-[var(--font-heading)]">Quick Links</h3>
             <ul className="space-y-2.5">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 hover:text-primary-400 transition-colors inline-flex items-center gap-1 group"
+                    className="text-sm hover:text-primary-500 transition-colors inline-flex items-center gap-1 group"
                   >
                     {link.label}
                     <ArrowUpRight
@@ -96,15 +93,14 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
-            <h3 className="font-bold text-white mb-4 font-[var(--font-heading)]">Support</h3>
+            <h3 className="font-bold text-[var(--color-text)] mb-4 font-[var(--font-heading)]">Support</h3>
             <ul className="space-y-2.5">
               {supportLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 hover:text-primary-400 transition-colors inline-flex items-center gap-1 group"
+                    className="text-sm hover:text-primary-500 transition-colors inline-flex items-center gap-1 group"
                   >
                     {link.label}
                     <ArrowUpRight
@@ -117,23 +113,22 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h3 className="font-bold text-white mb-4 font-[var(--font-heading)]">Contact</h3>
+            <h3 className="font-bold text-[var(--color-text)] mb-4 font-[var(--font-heading)]">Contact</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2.5 text-gray-400">
+              <li className="flex items-start gap-2.5">
                 <MapPin size={16} className="text-primary-500 mt-0.5 flex-shrink-0" />
                 <span>Nairobi, Kenya</span>
               </li>
-              <li className="flex items-center gap-2.5 text-gray-400">
+              <li className="flex items-center gap-2.5">
                 <Phone size={16} className="text-primary-500 flex-shrink-0" />
-                <a href="tel:+254700000000" className="hover:text-primary-400 transition-colors">
+                <a href="tel:+254700000000" className="hover:text-primary-500 transition-colors">
                   +254 700 000 000
                 </a>
               </li>
-              <li className="flex items-center gap-2.5 text-gray-400">
+              <li className="flex items-center gap-2.5">
                 <Mail size={16} className="text-primary-500 flex-shrink-0" />
-                <a href="mailto:hello@shoestore.ke" className="hover:text-primary-400 transition-colors">
+                <a href="mailto:hello@shoestore.ke" className="hover:text-primary-500 transition-colors">
                   hello@shoestore.ke
                 </a>
               </li>
@@ -141,15 +136,14 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+        <div className="border-t border-[var(--color-border)] mt-10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
           <p>&copy; {new Date().getFullYear()} Shoe Store. All rights reserved.</p>
           <div className="flex items-center gap-1">
             <span>Made with</span>
             <motion.span
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              className="text-secondary-600"
+              className="text-secondary-500"
             >
               ❤️
             </motion.span>

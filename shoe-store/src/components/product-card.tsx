@@ -38,15 +38,12 @@ export function ProductCard({ product, variant }: ProductCardProps) {
 
   return (
     <motion.article
-      className="group bg-white rounded-2xl border border-gray-100 overflow-hidden"
+      className="group bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden shadow-sm"
       whileHover={{ y: -6 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      style={{
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)',
-      }}
     >
       <Link href={`/shoes/${product.slug}`} className="block">
-        <div className="relative aspect-square bg-gray-50 overflow-hidden">
+        <div className="relative aspect-square bg-[var(--color-surface-elevated)] overflow-hidden">
           <motion.div
             className="relative w-full h-full"
             whileHover={{ scale: 1.08 }}
@@ -68,7 +65,7 @@ export function ProductCard({ product, variant }: ProductCardProps) {
               animate={{ scale: 1, opacity: 1 }}
               className="absolute top-3 left-3 z-10"
             >
-              <span className="inline-flex items-center gap-1 bg-red-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg">
+              <span className="inline-flex items-center gap-1 bg-secondary-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg">
                 <Tag size={10} />
                 {discountPercent}% OFF
               </span>
@@ -81,7 +78,7 @@ export function ProductCard({ product, variant }: ProductCardProps) {
               className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               initial={false}
             >
-              <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+              <span className="inline-flex items-center gap-1.5 bg-[var(--color-surface)]/95 backdrop-blur-sm text-[var(--color-text)] px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-[var(--color-border)]">
                 <Eye size={14} />
                 Quick View
               </span>
@@ -90,7 +87,7 @@ export function ProductCard({ product, variant }: ProductCardProps) {
 
           {!inStock && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
+              <span className="bg-secondary-600 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
                 Out of Stock
               </span>
             </div>
@@ -99,7 +96,7 @@ export function ProductCard({ product, variant }: ProductCardProps) {
           {/* Low stock pulse */}
           {isLowStock && (
             <motion.span
-              className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full"
+              className="absolute top-3 right-3 badge-warning text-[10px] font-bold shadow-md"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -113,12 +110,12 @@ export function ProductCard({ product, variant }: ProductCardProps) {
             <span className="text-[11px] font-bold text-primary-600 uppercase tracking-wider">
               {product.brand}
             </span>
-            <span className="text-[11px] text-gray-400 uppercase tracking-wider">
+            <span className="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider">
               {product.category}
             </span>
           </div>
 
-          <h3 className="font-semibold text-gray-900 line-clamp-1 mb-1.5 font-[var(--font-heading)]">
+          <h3 className="font-semibold text-[var(--color-text)] line-clamp-1 mb-1.5 font-[var(--font-heading)]">
             {product.name}
           </h3>
 
@@ -126,15 +123,15 @@ export function ProductCard({ product, variant }: ProductCardProps) {
             <div className="flex items-center gap-2">
               {isOnSale ? (
                 <>
-                  <span className="text-lg font-bold text-red-600">
+                  <span className="text-lg font-bold text-secondary-600">
                     {formatPrice(product.salePrice!)}
                   </span>
-                  <span className="text-sm text-gray-400 line-through">
+                  <span className="text-sm text-[var(--color-text-muted)] line-through">
                     {formatPrice(product.basePrice)}
                   </span>
                 </>
               ) : (
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-lg font-bold text-[var(--color-text)]">
                   {formatPrice(product.basePrice)}
                 </span>
               )}
@@ -142,10 +139,8 @@ export function ProductCard({ product, variant }: ProductCardProps) {
             {variant && (
               <span
                 className={cn(
-                  'text-xs px-2 py-0.5 rounded-full font-semibold',
-                  inStock
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
+                  'badge text-xs font-semibold',
+                  inStock ? 'badge-success' : 'badge-danger'
                 )}
               >
                 {inStock ? `${variant.stock} left` : 'Sold Out'}

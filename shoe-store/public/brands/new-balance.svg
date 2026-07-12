@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
-  <text x="60" y="20" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#c1272d" text-anchor="middle" dominant-baseline="central">New Balance</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <text x="8" y="28" font-size="20" fill="currentColor" font-weight="900" font-family="Arial" letter-spacing="-1">NB</text>
+  <path d="M45 20C45 14 50 10 56 10C60 10 63 12 63 12L70 16C66 14 62 12 58 12C49 12 43 18 43 25C43 30 46 33 50 33C54 33 57 30 57 30L50 26C50 26 48 24 48 21" stroke="currentColor" stroke-width="0" fill="currentColor" opacity="0"/>
+  <text x="44" y="24" font-size="9" fill="currentColor" font-weight="600" font-family="Arial">new balance</text>
 </svg>

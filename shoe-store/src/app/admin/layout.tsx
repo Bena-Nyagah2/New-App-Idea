@@ -20,13 +20,12 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Admin Nav */}
-      <nav className="bg-white border-b sticky top-0 z-30">
+    <div className="min-h-screen bg-[var(--color-bg)]">
+      <nav className="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-6">
-              <Link href="/admin" className="font-bold text-gray-900 font-mono text-sm">
+              <Link href="/admin" className="font-bold text-[var(--color-text)] font-mono text-sm">
                 Admin
               </Link>
               {NAV_ITEMS.map((item) => {
@@ -36,14 +35,16 @@ export default function AdminLayout({
                     key={item.href}
                     href={item.href}
                     className={`relative text-sm font-medium transition-colors ${
-                      isActive ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'
+                      isActive
+                        ? 'text-primary-600'
+                        : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                     }`}
                   >
                     {item.label}
                     {isActive && (
                       <motion.div
                         layoutId="admin-nav-indicator"
-                        className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-primary-600"
+                        className="absolute -bottom-[14px] left-0 right-0 h-0.5 bg-primary-600"
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                       />
                     )}
@@ -52,11 +53,11 @@ export default function AdminLayout({
               })}
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/" className="text-sm text-gray-500 hover:text-primary-600 transition-colors">
+              <Link href="/" className="text-sm text-[var(--color-text-muted)] hover:text-primary-600 transition-colors">
                 ← Store
               </Link>
               <form action="/api/auth/logout" method="POST">
-                <button type="submit" className="text-sm text-gray-400 hover:text-red-600 transition-colors">
+                <button type="submit" className="text-sm text-[var(--color-text-muted)] hover:text-secondary-600 transition-colors">
                   Logout
                 </button>
               </form>
@@ -65,7 +66,6 @@ export default function AdminLayout({
         </div>
       </nav>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {children}
       </div>

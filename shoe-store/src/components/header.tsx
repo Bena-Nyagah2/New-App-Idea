@@ -18,7 +18,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="relative group py-1 text-gray-700 hover:text-primary-600 font-semibold transition-colors"
+      className="relative group py-1 text-[var(--color-text)] hover:text-primary-600 font-semibold transition-colors"
     >
       {label}
       <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 rounded-full group-hover:w-full transition-all duration-300 ease-out" />
@@ -32,10 +32,9 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm">
+    <header className="sticky top-0 z-40 bg-[var(--color-surface)]/80 backdrop-blur-lg border-b border-[var(--color-border)] shadow-sm">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group" aria-label="Shoe Store Home">
             <motion.span
               className="text-primary-600"
@@ -44,35 +43,32 @@ export function Header() {
             >
               <ShoppingBag size={28} />
             </motion.span>
-            <span className="text-xl font-bold text-gray-900 font-[var(--font-heading)]">
+            <span className="text-xl font-bold text-[var(--color-text)] font-[var(--font-heading)]">
               Shoe Store
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <NavLink key={link.href} href={link.href} label={link.label} />
             ))}
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-3">
             <Link
               href="/shoes"
-              className="hidden sm:block text-gray-700 hover:text-primary-600 font-semibold transition-colors"
+              className="hidden sm:block text-[var(--color-text)] hover:text-primary-600 font-semibold transition-colors"
             >
               Shop All
             </Link>
 
-            {/* Cart Button */}
             <motion.button
               onClick={() => useCartStore.getState().toggleCart()}
-              className="relative p-2.5 rounded-xl hover:bg-primary-50 transition-colors"
+              className="relative p-2.5 rounded-xl hover:bg-[var(--color-surface-elevated)] transition-colors"
               aria-label={`Cart, ${totalItems} items`}
               whileTap={{ scale: 0.9 }}
             >
-              <ShoppingCart size={22} className="text-gray-700" />
+              <ShoppingCart size={22} className="text-[var(--color-text)]" />
               <AnimatePresence>
                 {totalItems > 0 && (
                   <motion.span
@@ -89,19 +85,17 @@ export function Header() {
               </AnimatePresence>
             </motion.button>
 
-            {/* Mobile menu toggle */}
             <button
-              className="md:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors"
+              className="md:hidden p-2 rounded-xl hover:bg-[var(--color-surface-elevated)] transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileOpen ? <X size={22} className="text-[var(--color-text)]" /> : <Menu size={22} className="text-[var(--color-text)]" />}
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Navigation */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -109,14 +103,14 @@ export function Header() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden border-t bg-white overflow-hidden"
+            className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden"
           >
             <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2 text-sm">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="py-2 text-gray-700 hover:text-primary-600 font-semibold"
+                  className="py-2 text-[var(--color-text)] hover:text-primary-600 font-semibold"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}

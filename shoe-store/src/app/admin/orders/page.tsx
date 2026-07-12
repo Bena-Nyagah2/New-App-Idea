@@ -71,12 +71,12 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                       {formatPrice(order.total)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${statusConfig?.color || 'gray'}20`, color: statusConfig?.color || 'gray' }}>
+                      <span className={`badge badge-${statusConfig?.color ?? 'gray'}`}>
                         {statusConfig?.label || order.status}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${paymentConfig?.color || 'gray'}20`, color: paymentConfig?.color || 'gray' }}>
+                      <span className={`badge badge-${paymentConfig?.color ?? 'gray'}`}>
                         {paymentConfig?.label || order.paymentMethod}
                       </span>
                     </td>
