@@ -155,7 +155,7 @@ export function Footer() {
             >
               ❤️
             </motion.span>
-            <span>in Nairobi</span>
+            <span>By Bena Nyaga</span>
           </div>
         </div>
       </div>
