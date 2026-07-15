@@ -2,27 +2,28 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { WhatsAppIcon, InstagramIcon, FacebookIcon } from '@/components/icons/social-icons';
+import { WhatsAppIcon, InstagramIcon, TikTokIcon } from '@/components/icons/social-icons';
 import { MapPin, Phone, Mail, ArrowUpRight, Footprints, CircleDot, Sofa, Volleyball, HelpCircle, MessageCircle, TruckIcon, RotateCcw } from 'lucide-react';
+import { siteConfig } from '@/lib/site-config';
 
 const socialLinks = [
   {
     icon: WhatsAppIcon,
-    href: 'https://wa.me/254700000000',
+    href: `https://wa.me/${siteConfig.whatsapp}`,
     label: 'WhatsApp',
     hoverColor: 'hover:bg-green-500',
   },
   {
     icon: InstagramIcon,
-    href: 'https://instagram.com/shoestore',
+    href: siteConfig.instagram,
     label: 'Instagram',
     hoverColor: 'hover:bg-pink-500',
   },
   {
-    icon: FacebookIcon,
-    href: 'https://facebook.com/shoestore',
-    label: 'Facebook',
-    hoverColor: 'hover:bg-blue-600',
+    icon: TikTokIcon,
+    href: siteConfig.tiktok,
+    label: 'TikTok',
+    hoverColor: 'hover:bg-black',
   },
 ];
 
@@ -48,11 +49,11 @@ export function Footer() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
               <span className="text-xl font-bold text-[var(--color-text)] font-[var(--font-heading)] group-hover:text-primary-500 transition-colors">
-                Shoe Store
+                {siteConfig.name}
               </span>
             </Link>
             <p className="text-sm leading-relaxed">
-              Quality shoes at great prices. Nairobi&apos;s favorite shoe store.
+              {siteConfig.aboutText}. {siteConfig.tagline}.
             </p>
 
             <div className="flex gap-3 pt-2">
@@ -126,26 +127,33 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2.5">
                 <MapPin size={16} className="text-primary-500 mt-0.5 flex-shrink-0" />
-                <span>Nairobi, Kenya</span>
+                <span>{siteConfig.address}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone size={16} className="text-primary-500 flex-shrink-0" />
-                <a href="tel:+254700000000" className="hover:text-primary-500 transition-colors">
-                  +254 700 000 000
+                <a href={`tel:+${siteConfig.phone}`} className="hover:text-primary-500 transition-colors">
+                  +{siteConfig.phone}
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={16} className="text-primary-500 flex-shrink-0" />
-                <a href="mailto:hello@shoestore.ke" className="hover:text-primary-500 transition-colors">
-                  hello@shoestore.ke
+                <a href={`mailto:${siteConfig.email}`} className="hover:text-primary-500 transition-colors">
+                  {siteConfig.email}
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-[var(--color-border)] mt-10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
-          <p>&copy; {new Date().getFullYear()} Shoe Store. All rights reserved.</p>
+        {/* Disclaimer */}
+        <div className="mt-10 rounded-xl bg-[var(--color-surface-elevated)] border border-[var(--color-border)] p-4">
+          <p className="text-xs leading-relaxed text-[var(--color-text-muted)]">
+            <strong className="text-[var(--color-text)]">Disclaimer:</strong> {siteConfig.disclaimer}
+          </p>
+        </div>
+
+        <div className="border-t border-[var(--color-border)] mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+          <p>&copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
           <div className="flex items-center gap-1">
             <span>Made with</span>
             <motion.span

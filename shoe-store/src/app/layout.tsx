@@ -9,6 +9,7 @@ import { DiscountBanner } from '@/components/discount-banner';
 import { db } from '@/lib/db';
 import { settings } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { siteConfig } from '@/lib/site-config';
 
 const fredoka = Fredoka({
   subsets: ['latin'],
@@ -25,33 +26,33 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: 'Shoe Store | Quality Shoes in Nairobi',
-  description: 'Shop the latest running, lifestyle, and basketball shoes. Fast delivery in Nairobi via Uber Boda. Pay online or cash on delivery.',
-  keywords: ['shoes', 'sneakers', 'running shoes', 'Nairobi', 'Kenya', 'cash on delivery'],
-  authors: [{ name: 'Shoe Store' }],
-  creator: 'Shoe Store',
-  publisher: 'Shoe Store',
+  title: `${siteConfig.name} | Quality Sneakers & Urban Fashion in Nairobi`,
+  description: `Shop the latest sneakers, footwear, and urban fashion. Free delivery within ${siteConfig.freeDeliveryArea}. Countrywide and worldwide shipping at a fee.`,
+  keywords: ['sneakers', 'shoes', 'footwear', 'urban fashion', 'Nairobi', 'Kenya', 'CBD delivery', siteConfig.name],
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
   robots: 'index, follow',
   openGraph: {
     type: 'website',
     locale: 'en_KE',
-    url: 'https://shoestore.vercel.app',
-    siteName: 'Shoe Store',
-    title: 'Shoe Store | Quality Shoes in Nairobi',
-    description: 'Shop the latest running, lifestyle, and basketball shoes. Fast delivery in Nairobi.',
+    url: 'https://nurwinsstore.vercel.app',
+    siteName: siteConfig.name,
+    title: `${siteConfig.name} | Quality Sneakers & Urban Fashion`,
+    description: `${siteConfig.aboutText}. Free delivery within ${siteConfig.freeDeliveryArea}.`,
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Shoe Store - Quality Shoes in Nairobi',
+        alt: `${siteConfig.name} - ${siteConfig.tagline}`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Shoe Store | Quality Shoes in Nairobi',
-    description: 'Shop the latest running, lifestyle, and basketball shoes. Fast delivery in Nairobi.',
+    title: `${siteConfig.name} | Quality Sneakers & Urban Fashion`,
+    description: `${siteConfig.aboutText}. Free delivery within ${siteConfig.freeDeliveryArea}.`,
     images: ['/og-image.jpg'],
   },
   verification: {

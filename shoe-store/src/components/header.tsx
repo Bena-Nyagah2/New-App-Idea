@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, ShoppingBag, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { ThemeToggle } from './theme-toggle';
+import { CurrencyToggle } from './currency-toggle';
+import { siteConfig } from '@/lib/site-config';
 
 const navLinks = [
   { href: '/shoes', label: 'Shop' },
@@ -36,7 +38,7 @@ export function Header() {
     <header className="sticky top-0 z-40 bg-[var(--color-surface)]/80 backdrop-blur-lg border-b border-[var(--color-border)] shadow-sm">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 group" aria-label="Shoe Store Home">
+          <Link href="/" className="flex items-center gap-2 group" aria-label={`${siteConfig.name} Home`}>
             <motion.span
               className="text-primary-600"
               whileHover={{ rotate: -10, scale: 1.1 }}
@@ -45,7 +47,7 @@ export function Header() {
               <ShoppingBag size={28} />
             </motion.span>
             <span className="text-xl font-bold text-[var(--color-text)] font-[var(--font-heading)]">
-              Shoe Store
+              {siteConfig.name}
             </span>
           </Link>
 
@@ -64,6 +66,7 @@ export function Header() {
             </Link>
 
             <ThemeToggle />
+            <CurrencyToggle />
 
             <motion.button
               onClick={() => useCartStore.getState().toggleCart()}

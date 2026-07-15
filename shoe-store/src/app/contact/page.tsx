@@ -1,10 +1,11 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { siteConfig } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: 'Contact Us - Shoe Store',
-  description: 'Get in touch with Shoe Store Nairobi. WhatsApp, call, or email us for any inquiries.',
+  title: `Contact Us - ${siteConfig.name}`,
+  description: `Get in touch with ${siteConfig.name}. WhatsApp, call, or email us for any inquiries.`,
 };
 
 export default function ContactPage() {
@@ -23,7 +24,7 @@ export default function ContactPage() {
         {/* Contact Cards */}
         <div className="space-y-4">
           <a
-            href="https://wa.me/254700000000"
+            href={`https://wa.me/${siteConfig.whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 hover:shadow-lg transition-all group"
@@ -33,12 +34,12 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-bold text-[var(--color-text)]">WhatsApp</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">+254 700 000 000</p>
+              <p className="text-sm text-[var(--color-text-muted)]">+{siteConfig.whatsapp}</p>
             </div>
           </a>
 
           <a
-            href="tel:+254700000000"
+            href={`tel:+${siteConfig.phone}`}
             className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 hover:shadow-lg transition-all group"
           >
             <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -46,12 +47,12 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-bold text-[var(--color-text)]">Call Us</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">+254 700 000 000</p>
+              <p className="text-sm text-[var(--color-text-muted)]">+{siteConfig.phone}</p>
             </div>
           </a>
 
           <a
-            href="mailto:hello@shoestore.ke"
+            href={`mailto:${siteConfig.email}`}
             className="flex items-center gap-4 bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-5 hover:shadow-lg transition-all group"
           >
             <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -59,7 +60,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-bold text-[var(--color-text)]">Email</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">hello@shoestore.ke</p>
+              <p className="text-sm text-[var(--color-text-muted)]">{siteConfig.email}</p>
             </div>
           </a>
 
@@ -69,7 +70,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-bold text-[var(--color-text)]">Location</h3>
-              <p className="text-sm text-[var(--color-text-muted)]">Nairobi, Kenya</p>
+              <p className="text-sm text-[var(--color-text-muted)]">{siteConfig.address}</p>
             </div>
           </div>
         </div>

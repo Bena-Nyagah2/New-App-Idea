@@ -1,21 +1,47 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { siteConfig } from '@/lib/site-config';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(amount: number | null | undefined, currency = 'KES'): string {
-  const safe = typeof amount === 'number' && isFinite(amount) ? amount : 0;
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(safe / 100);
+function getActiveCurrency(): 'KES' | 'USD' {
+  if (typeof window === 'undefined') return 'KES';
+  try {
+    const stored = JSON.parse(localStorage.getItem('nurwins-currency') || '{}');
+    return stored?.state?.currency === 'USD' ? 'USD' : 'KES';
+  } catch {
+    return 'KES';
+  }
 }
 
-export function formatPriceCompact(amount: number, currency = 'KES'): string {
+export function formatPrice(amount: number | null | undefined, currency?: 'KES' | 'USD'): string {
+  const safe = typeof amount === 'number' && isFinite(amount) ? amount : 0;
+  const resolvedCurrency = currency || getActiveCurrency();
+  const kshBase = safe;
+  const displayAmount = resolvedCurrency === 'USD'
+    ? kshBase / siteConfig.currency.exchangeRate
+    : kshBase;
+
+  if (resolvedCurrency === 'USD') {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(displayAmount / 100);
+  }
+
+  return new Intl.NumberFormat('en-KE', {
+    style: 'currency',
+    currency: 'KES',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(kshBase / 100);
+}
+
+export function formatPriceCompact(amount: number, currency: 'KES' | 'USD' = 'KES'): string {
   const formatted = formatPrice(amount, currency);
   return formatted.replace(/\s/g, '');
 }

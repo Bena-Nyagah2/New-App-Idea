@@ -20,7 +20,7 @@ export const themes: Record<string, ThemeConfig> = {
   default: {
     id: 'default',
     name: 'Default',
-    description: 'The classic Shoe Store look',
+    description: 'The classic Nurwins Store look',
     primary: '#ed8914',
     secondary: '#E11D48',
     accent: '#2563EB',

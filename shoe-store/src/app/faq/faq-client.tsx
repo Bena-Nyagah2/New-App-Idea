@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { siteConfig } from '@/lib/site-config';
 
 const faqSections = [
   {
@@ -61,15 +62,15 @@ const faqSections = [
     items: [
       {
         q: 'Can I return or exchange my shoes?',
-        a: 'Yes! You have 7 days from delivery to return or exchange. Shoes must be unworn and in original packaging.',
+        a: `You can exchange unworn shoes within ${siteConfig.returnDays} days of delivery. We offer exchanges only — no cash refunds. Swap for another shoe of equal or higher value.`,
       },
       {
-        q: 'How do I start a return?',
-        a: 'Send us a WhatsApp message or email with your order ID. We\'ll arrange a pickup (Nairobi) or guide you on the drop-off process.',
+        q: 'How do I start an exchange?',
+        a: `Send a WhatsApp message to +${siteConfig.whatsapp} or email ${siteConfig.email} with your order ID. We'll arrange a pickup (Nairobi CBD) or guide you on the drop-off process.`,
       },
       {
-        q: 'When will I get my refund?',
-        a: 'Refunds are processed within 3-5 business days via the original payment method.',
+        q: 'Do you offer refunds?',
+        a: 'No — we offer exchanges only within 4 days of delivery. You can swap your item for another shoe of equal or higher value (price difference applies).',
       },
     ],
   },

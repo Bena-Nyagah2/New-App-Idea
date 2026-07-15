@@ -1,19 +1,21 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Truck, Clock, MapPin, CreditCard } from 'lucide-react';
+import { siteConfig } from '@/lib/site-config';
 
 export const metadata: Metadata = {
-  title: 'Delivery Information - Shoe Store',
-  description: 'Learn about our delivery options, zones, and pricing across Kenya.',
+  title: `Delivery Information - ${siteConfig.name}`,
+  description: `Learn about our delivery options, zones, and pricing. Free delivery within ${siteConfig.freeDeliveryArea}.`,
 };
 
 const zones = [
-  { area: 'Nairobi CBD', boda: 'KES 200', courier: 'KES 350', pickup: 'Free', time: 'Same day' },
-  { area: 'Nairobi Suburbs', boda: 'KES 300', courier: 'KES 400', pickup: 'Free', time: 'Same/next day' },
-  { area: 'Westlands / Karen', boda: 'KES 350', courier: 'KES 450', pickup: 'Free', time: 'Same day' },
-  { area: 'Kiambu / Thika', boda: '—', courier: 'KES 500', pickup: '—', time: '1-2 days' },
-  { area: 'Mombasa', boda: '—', courier: 'KES 700', pickup: '—', time: '2-3 days' },
-  { area: 'Upcountry', boda: '—', courier: 'From KES 600', pickup: '—', time: '3-5 days' },
+  { area: `${siteConfig.freeDeliveryArea}`, boda: 'Free', courier: 'Free', pickup: 'Free', time: 'Same/Next day' },
+  { area: 'Nairobi (Outside CBD)', boda: 'KES 200', courier: 'KES 350', pickup: 'Free', time: 'Same/Next day' },
+  { area: 'Kiambu / Thika', boda: '—', courier: 'KES 350', pickup: '—', time: '1-2 days' },
+  { area: 'Machakos / Kajiado', boda: '—', courier: 'KES 400', pickup: '—', time: '1-2 days' },
+  { area: 'Mombasa', boda: '—', courier: 'KES 500', pickup: '—', time: '2-3 days' },
+  { area: 'Countrywide (Other Counties)', boda: '—', courier: 'KES 400-600', pickup: '—', time: '2-5 days' },
+  { area: 'Worldwide', boda: '—', courier: 'From KES 1,000', pickup: '—', time: '5-10 days' },
 ];
 
 export default function DeliveryInfoPage() {
@@ -26,7 +28,7 @@ export default function DeliveryInfoPage() {
       </nav>
 
       <h1 className="heading-1 mb-4">Delivery Information</h1>
-      <p className="text-body text-lg mb-10">Fast, reliable delivery across Kenya</p>
+      <p className="text-body text-lg mb-10">Fast, reliable delivery across Kenya and worldwide</p>
 
       {/* Delivery Options */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -48,7 +50,7 @@ export default function DeliveryInfoPage() {
       </div>
 
       {/* Pricing Table */}
-      <h2 className="heading-2 mb-6">Delivery Zones &amp; Pricing</h2>
+      <h2 className="heading-2 mb-6">Delivery Zones & Pricing</h2>
       <div className="overflow-x-auto mb-12">
         <table className="w-full text-sm bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] overflow-hidden">
           <thead>
@@ -61,7 +63,7 @@ export default function DeliveryInfoPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--color-border)]">
-            {zones.map((zone) => (
+            {zones.map((zone, i) => (
               <tr key={zone.area}>
                 <td className="px-5 py-3 font-medium text-[var(--color-text)]">{zone.area}</td>
                 <td className="px-5 py-3 text-[var(--color-text-muted)]">{zone.boda}</td>

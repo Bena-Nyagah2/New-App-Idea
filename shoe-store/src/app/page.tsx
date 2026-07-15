@@ -10,11 +10,12 @@ import { TrustIndicators } from './trust-indicators';
 import { CategoryCard } from './category-card';
 import { BrandMarquee } from './brand-marquee';
 import { AnimatedTag } from '@/components/ui/animated-tag';
+import { siteConfig } from '@/lib/site-config';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Shoe Store | Quality Shoes in Nairobi',
-  description: 'Shop the latest running, lifestyle, and basketball shoes. Fast delivery in Nairobi via Uber Boda. Pay online or cash on delivery.',
+  title: `${siteConfig.name} | Premium Sneakers & Urban Fashion`,
+  description: `Shop the latest sneakers, footwear, and urban fashion at ${siteConfig.name}. Free delivery within ${siteConfig.freeDeliveryArea}. Outside ${siteConfig.freeDeliveryArea} shipping at a fee.`,
 };
 
 function safeJsonArray(input: unknown): string[] {

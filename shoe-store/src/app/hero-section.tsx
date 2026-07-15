@@ -6,6 +6,7 @@ import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { HeroBackground } from '@/components/hero/hero-background';
 import { ProductShowcase } from '@/components/hero/product-showcase';
 import { FloatingBadge } from '@/components/hero/floating-badge';
+import { siteConfig } from '@/lib/site-config';
 
 interface HomeHeroSectionProps {
   productName: string;
@@ -53,14 +54,14 @@ export function HomeHeroSection({ productName, productBrand, productPrice, produ
             </motion.div>
 
             {/* Subtitle */}
-            <motion.p
-              className="text-lg sm:text-xl text-white/80 max-w-lg leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              Discover premium running, lifestyle & basketball shoes. Fast Nairobi delivery via Uber Boda. Pay online or cash on delivery.
-            </motion.p>
+          <motion.p
+            className="text-lg sm:text-xl text-white/80 max-w-lg leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Discover premium sneakers, urban fashion, and footwear. Free delivery within {siteConfig.freeDeliveryArea}. Outside {siteConfig.freeDeliveryArea}, countrywide, and worldwide shipping at a fee.
+          </motion.p>
 
             {/* CTAs */}
             <motion.div

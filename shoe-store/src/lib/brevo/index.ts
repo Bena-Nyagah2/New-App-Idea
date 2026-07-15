@@ -1,11 +1,13 @@
 import * as SibApiV3Sdk from '@sendinblue/client';
+import { siteConfig } from '@/lib/site-config';
+import { formatPrice } from '@/lib/utils';
 
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY!);
 
 const SENDER = {
   email: process.env.BREVO_SENDER_EMAIL || 'orders@yourstore.vercel.app',
-  name: process.env.BREVO_SENDER_NAME || 'Shoe Store',
+  name: process.env.BREVO_SENDER_NAME || siteConfig.name,
 };
 
 export async function sendOrderConfirmationEmail(data: {
@@ -87,7 +89,7 @@ export async function sendOrderConfirmationEmail(data: {
         <p style="color: #6b7280; font-size: 14px;">We'll notify you when your order is out for delivery. Questions? Reply to this email.</p>
         
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
-        <p style="color: #9ca3af; font-size: 12px; text-align: center;">Shoe Store • Nairobi, Kenya</p>
+        <p style="color: #9ca3af; font-size: 12px; text-align: center;">${siteConfig.name} • ${siteConfig.address}</p>
       </div>
     </body>
     </html>
@@ -97,7 +99,7 @@ export async function sendOrderConfirmationEmail(data: {
     await apiInstance.sendTransacEmail({
       sender: SENDER,
       to: [{ email: data.to, name: data.name }],
-      subject: `Order Confirmed - #${data.orderId} • Shoe Store`,
+      subject: `Order Confirmed - #${data.orderId} • ${siteConfig.name}`,
       htmlContent: html,
     });
     return true;
@@ -135,7 +137,7 @@ export async function sendAdminNewOrderEmail(data: {
     await apiInstance.sendTransacEmail({
       sender: SENDER,
       to: [{ email: process.env.BREVO_SENDER_EMAIL!, name: 'Admin' }],
-      subject: `🔔 New Order #${data.orderId} - ${formatPrice(data.total)}`,
+      subject: `🔔 New Order #${data.orderId} - ${formatPrice(data.total)} • ${siteConfig.name}`,
       htmlContent: html,
     });
     return true;
@@ -231,7 +233,7 @@ export async function sendSupplierPayoutEmail(data: {
     await apiInstance.sendTransacEmail({
       sender: SENDER,
       to: [{ email: data.to, name: data.name }],
-      subject: `💰 Payout: ${formatPrice(data.amount)} - Shoe Store`,
+      subject: `💰 Payout: ${formatPrice(data.amount)} - ${siteConfig.name}`,
       htmlContent: html,
     });
     return true;
@@ -240,5 +242,3 @@ export async function sendSupplierPayoutEmail(data: {
     return false;
   }
 }
-
-import { formatPrice } from '@/lib/utils';

@@ -5,17 +5,22 @@ import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, ArrowRight, Truck, Package, ShieldCheck } from 'lucide-react';
-
-const FREE_DELIVERY_THRESHOLD = 700000;
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, ArrowRight, Info } from 'lucide-react';
+import { useState } from 'react';
+import { MagneticButton } from '@/components/ui/magnetic-button';
+import { siteConfig } from '@/lib/site-config';
+import { calculateDeliveryFee, getDeliveryLabel, isCbdArea } from '@/lib/cdb-utils';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getSubtotal } = useCartStore();
   const subtotal = getSubtotal();
   const hasItems = items.length > 0;
-  const remaining = Math.max(FREE_DELIVERY_THRESHOLD - subtotal, 0);
-  const progress = Math.min((subtotal / FREE_DELIVERY_THRESHOLD) * 100, 100);
-  const qualifiesForFree = subtotal >= FREE_DELIVERY_THRESHOLD;
+
+  const [deliveryCounty, setDeliveryCounty] = useState('nairobi');
+  const [deliveryArea, setDeliveryArea] = useState('');
+  const isFreeDelivery = isCbdArea(deliveryArea);
+  const deliveryFee = isFreeDelivery ? 0 : calculateDeliveryFee(deliveryCounty, deliveryArea);
+  const deliveryLabel = getDeliveryLabel(deliveryCounty, deliveryArea);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -52,160 +57,169 @@ export default function CartPage() {
         </motion.div>
       ) : (
         <div className="space-y-6">
-          {/* Free delivery banner */}
-          <motion.div
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          {/* Delivery */}
+          <div className="rounded-2xl border border-[var(--color-border)] p-4 bg-[var(--color-surface)]">
             <div className="flex items-center gap-2 mb-2">
-              {qualifiesForFree ? (
-                <Truck size={16} className="text-green-600" />
-              ) : (
-                <Package size={16} className="text-[var(--color-text-muted)]" />
-              )}
+              <Info size={16} className="text-primary-600" />
               <p className="text-sm font-medium text-[var(--color-text-muted)]">
-                {qualifiesForFree ? (
-                  <span className="text-green-600 font-bold">Free delivery unlocked!</span>
-                ) : (
-                  <>Add <span className="font-bold text-[var(--color-text)]">{formatPrice(remaining)}</span> more for free delivery</>
-                )}
+                Free delivery within {siteConfig.freeDeliveryArea}. Outside {siteConfig.freeDeliveryArea} at a fee.
               </p>
             </div>
-            <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-primary-400 to-primary-600"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-              />
+
+            <div className="flex items-center gap-2 mt-3 border-t border-[var(--color-border)] pt-3">
+              <label className="text-sm text-[var(--color-text-muted)]">County</label>
+              <select
+                value={deliveryCounty}
+                onChange={(e) => setDeliveryCounty(e.target.value)}
+                className="input flex-1 max-w-[200px]"
+              >
+                <option value="nairobi">Nairobi</option>
+                <option value="kiambu">Kiambu</option>
+                <option value="machakos">Machakos</option>
+                <option value="countrywide">Other Kenyan County</option>
+                <option value="worldwide">Worldwide</option>
+              </select>
+
+              {deliveryCounty === 'nairobi' && (
+                <>
+                  <label className="text-sm text-[var(--color-text-muted)]">Area</label>
+                  <input
+                    placeholder="e.g. CBD, Kilimani, Westlands"
+                    value={deliveryArea}
+                    onChange={(e) => setDeliveryArea(e.target.value)}
+                    className="input flex-1"
+                  />
+                </>
+              )}
             </div>
-          </motion.div>
 
-          {/* Cart Items */}
-          <div className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] divide-y divide-[var(--color-border)] overflow-hidden">
-            <AnimatePresence initial={false}>
-              {items.map((item) => (
-                <motion.div
-                  key={item.variantId}
-                  layout
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -30, height: 0 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className="flex gap-4 p-4 sm:p-6"
-                >
-                  <Link
-                    href={`/shoes/${item.productSlug}`}
-                    className="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800"
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.productName}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                      sizes="112px"
-                    />
-                  </Link>
-
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
-                    <div>
-                      <Link
-                        href={`/shoes/${item.productSlug}`}
-                        className="font-bold hover:text-primary-600 transition-colors line-clamp-1 font-[var(--font-heading)] text-[var(--color-text)]"
-                      >
-                        {item.productName}
-                      </Link>
-                      <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
-                        Size: {item.variantSize} · Color: {item.variantColor}
-                      </p>
-                      <p className="text-lg font-bold text-[var(--color-text)] mt-1.5">
-                        {formatPrice(item.unitPrice)}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-3">
-                      <div className="flex items-center border border-[var(--color-border)] rounded-xl overflow-hidden">
-                        <motion.button
-                          onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
-                          className="w-10 h-10 flex items-center justify-center hover:bg-[var(--color-surface-elevated)] transition-colors text-[var(--color-text-muted)]"
-                          aria-label="Decrease quantity"
-                          whileTap={{ scale: 0.85 }}
-                        >
-                          <Minus size={14} />
-                        </motion.button>
-                        <span className="w-12 h-10 flex items-center justify-center text-sm font-bold bg-[var(--color-surface-elevated)] text-[var(--color-text)]">
-                          {item.quantity}
-                        </span>
-                        <motion.button
-                          onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                          className="w-10 h-10 flex items-center justify-center hover:bg-[var(--color-surface-elevated)] transition-colors text-[var(--color-text-muted)]"
-                          aria-label="Increase quantity"
-                          whileTap={{ scale: 0.85 }}
-                        >
-                          <Plus size={14} />
-                        </motion.button>
-                      </div>
-
-                      <motion.button
-                        onClick={() => removeItem(item.variantId)}
-                        className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-2 rounded-lg transition-colors font-medium"
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <Trash2 size={14} />
-                        Remove
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {deliveryLabel && (
+              <p className="text-xs text-[var(--color-text-muted)] mt-2 flex items-center gap-1.5">
+                <Info size={12} /> {deliveryLabel}
+              </p>
+            )}
           </div>
 
-          {/* Summary */}
-          <motion.div
-            className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between items-center">
+          {/* Items */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="heading-3">Items</h2>
+              {subtotal > 0 && <Link href="/shoes" className="text-sm font-medium text-primary-600 flex items-center gap-1.5">
+                <ArrowLeft size={14} /> Continue Shopping
+              </Link>}
+            </div>
+
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
+              <div className="p-4 border-b border-[var(--color-border)] flex items-center gap-4 text-xs text-[var(--color-text-muted)] font-medium">
+                <span className="w-1/3"></span>
+                <span className="flex-1"></span>
+                <span>Price</span>
+              </div>
+
+              <motion.ul layout className="divide-y divide-[var(--color-border)]">
+                <AnimatePresence>
+                  {items.map((item) => (
+                    <motion.li
+                      key={item.variantId}
+                      layout
+                      initial={{ opacity: 0, y: -16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, height: 0, marginBottom: '-1px', overflow: 'hidden' }}
+                      transition={{ duration: 0.3, type: 'spring' }}
+                      className="p-4 hover:bg-[var(--color-surface-elevated)] transition-colors"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-1/3">
+                          <Image
+                            src={item.image}
+                            alt={item.productName}
+                            width={80}
+                            height={80}
+                            className="rounded-lg bg-[var(--color-surface-elevated)] object-cover"
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-sm text-[var(--color-text)] line-clamp-2">{item.productName}</h3>
+                          <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                            {item.variantSize} × {item.variantColor}
+                            {item.variantColorHex && (
+                              <span className="inline-flex items-center gap-1 ml-1">
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.variantColorHex }} />
+                              </span>
+                            )}
+                          </p>
+
+                          <div className="mt-3 flex items-center gap-2 text-xs">
+                            <button
+                              onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                              disabled={item.quantity <= 1}
+                              className={`px-2 py-0.5 border border-[var(--color-border)] rounded-full aspect-square flex items-center justify-center ${item.quantity <= 1 ? 'opacity-50' : 'hover:bg-[var(--color-surface)]'}`}
+                            >
+                              <Minus size={12} />
+                            </button>
+                            <span className="font-medium text-xs min-w-[20px] text-center">{item.quantity}</span>
+                            <button
+                              onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                              disabled={item.quantity >= (item.maxStock || 99)}
+                              className={`px-2 py-0.5 border border-[var(--color-border)] rounded-full aspect-square flex items-center justify-center ${item.quantity >= (item.maxStock || 99) ? 'opacity-50' : 'hover:bg-[var(--color-surface)]'}`}
+                            >
+                              <Plus size={12} />
+                            </button>
+                            <button
+                              onClick={() => removeItem(item.variantId)}
+                              className="ml-2 px-2 py-0.5 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-full text-red-600 dark:text-red-400 text-xs"
+                            >
+                              Remove
+                            </button>
+                            {(item.maxStock || 0) > 0 && item.quantity >= (item.maxStock || 0) && (
+                              <span className="ml-2 bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 rounded-full text-xs">
+                                Max stock
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="font-semibold text-[var(--color-text)]">{formatPrice(item.unitPrice * item.quantity)}</p>
+                          {item.quantity > 1 && (
+                            <p className="text-xs text-[var(--color-text-muted)] line-through">{formatPrice(item.unitPrice)} × {item.quantity}</p>
+                          )}
+                        </div>
+                      </div>
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
+              </motion.ul>
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6">
+            <h2 className="heading-3 mb-4">Order Summary</h2>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
                 <span className="text-[var(--color-text-muted)]">Subtotal</span>
-                <span className="font-bold text-lg text-[var(--color-text)]">{formatPrice(subtotal)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between">
                 <span className="text-[var(--color-text-muted)]">Delivery</span>
-                <span className="text-sm text-[var(--color-text-muted)]">{qualifiesForFree ? <span className="text-green-600 font-bold">FREE</span> : 'Calculated at checkout'}</span>
+                <span>{deliveryFee === 0 ? 'Free' : `+ ${formatPrice(deliveryFee)}`}</span>
+              </div>
+              <div className="border-t border-[var(--color-border)] pt-3 flex justify-between heading-4">
+                <span>Total</span>
+                <span>{formatPrice(subtotal + deliveryFee)}</span>
               </div>
             </div>
-            <Link href="/checkout" className="block">
-              <motion.span
-                className="flex items-center justify-center gap-2 w-full bg-primary-600 text-white py-4 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/20"
-                whileTap={{ scale: 0.95 }}
-              >
-                Proceed to Checkout
+
+            <MagneticButton className="w-full mt-6" size="lg">
+              <Link href="#" className="flex items-center justify-center gap-2 w-full">
+                Continue to Checkout
                 <ArrowRight size={16} />
-              </motion.span>
-            </Link>
-            <Link
-              href="/shoes"
-              className="flex items-center justify-center gap-1 text-primary-600 hover:text-primary-700 font-semibold mt-4 text-sm"
-            >
-              <ArrowLeft size={14} />
-              Continue Shopping
-            </Link>
-            <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-[var(--color-border)]">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
-                <ShieldCheck size={14} className="text-green-600" />
-                Secure checkout
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
-                <Truck size={14} className="text-primary-600" />
-                Fast delivery
-              </div>
-            </div>
-          </motion.div>
+              </Link>
+            </MagneticButton>
+          </div>
         </div>
       )}
     </div>

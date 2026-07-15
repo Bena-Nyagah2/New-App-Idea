@@ -8,6 +8,7 @@ import { AddToCartForm } from './add-to-cart-form';
 import { ProductImageTilt } from './product-image-tilt';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { siteConfig } from '@/lib/site-config';
 import { ProductCard } from '@/components/product-card';
 export const dynamic = 'force-dynamic';
 
@@ -182,8 +183,8 @@ export default async function ProductPage({ params }: PageProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               <div>
-                <p className="font-medium text-sm text-[var(--color-text)]">Fast Nairobi Delivery</p>
-                <p className="text-xs text-[var(--color-text-muted)]">Same/next day delivery via Uber Boda within Nairobi.</p>
+                <p className="font-medium text-sm text-[var(--color-text)]">Free Delivery within {siteConfig.freeDeliveryArea}</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Same/next day delivery within {siteConfig.freeDeliveryArea}. Outside {siteConfig.freeDeliveryArea}, countrywide & worldwide at a fee.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -200,8 +201,8 @@ export default async function ProductPage({ params }: PageProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               <div>
-                <p className="font-medium text-sm text-[var(--color-text)]">Easy Returns</p>
-                <p className="text-xs text-[var(--color-text-muted)]">Not the right fit? Free exchanges within Nairobi.</p>
+                <p className="font-medium text-sm text-[var(--color-text)]">Easy Exchanges</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Not the right fit? Free exchanges within {siteConfig.freeDeliveryArea} within {siteConfig.returnDays} days.</p>
               </div>
             </div>
           </div>
