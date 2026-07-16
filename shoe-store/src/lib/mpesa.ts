@@ -49,7 +49,22 @@ export function generatePassword(timestamp: string): string {
   return Buffer.from(data).toString('base64');
 }
 
+export function validateEnv(): string[] {
+  const missing: string[] = [];
+  if (!SHORTCODE) missing.push('MPESA_SHORTCODE');
+  if (!PASSKEY) missing.push('MPESA_PASSKEY');
+  if (!CONSUMER_KEY) missing.push('MPESA_CONSUMER_KEY');
+  if (!CONSUMER_SECRET) missing.push('MPESA_CONSUMER_SECRET');
+  if (!CALLBACK_URL) missing.push('MPESA_CALLBACK_URL');
+  return missing;
+}
+
 export async function getAccessToken(): Promise<string> {
+  const missing = validateEnv();
+  if (missing.length > 0) {
+    throw new Error(`Missing M-Pesa env vars: ${missing.join(', ')}`);
+  }
+
   const credentials = Buffer.from(`${CONSUMER_KEY}:${CONSUMER_SECRET}`).toString('base64');
 
   const res = await fetch(`${DARAJA_BASE_URL}/oauth/v1/generate?grant_type=client_credentials`, {

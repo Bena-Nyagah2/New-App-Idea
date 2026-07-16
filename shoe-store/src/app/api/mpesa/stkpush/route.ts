@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initiateStkPush } from '@/lib/mpesa';
+import { initiateStkPush, validateEnv } from '@/lib/mpesa';
 import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function POST(req: NextRequest) {
   try {
+    const missing = validateEnv();
+    if (missing.length > 0) {
+      console.error('[STK Push] Missing env vars:', missing.join(', '));
+      return NextResponse.json(
+        { error: `Server configuration error: missing ${missing.join(', ')}` },
+        { status: 500 },
+      );
+    }
     const body = await req.json();
     const { phoneNumber, amount, orderId } = body as {
       phoneNumber?: string;
@@ -47,12 +55,19 @@ export async function POST(req: NextRequest) {
 
     // Convert cents to KES for Safaricom (amount from frontend is in cents)
     const amountInKes = Math.round(amount / 100);
+    console.log('[STK Push] Starting:', { orderId, phoneNumber: phoneNumber.slice(0, 6) + '***', amountInKes });
 
     const stkResponse = await initiateStkPush({
       phoneNumber,
       amount: amountInKes,
       accountRef: orderId,
       description: `Payment for order ${orderId}`,
+    });
+
+    console.log('[STK Push] Safaricom responded:', {
+      ResponseCode: stkResponse.ResponseCode,
+      CheckoutRequestID: stkResponse.CheckoutRequestID,
+      ResponseDescription: stkResponse.ResponseDescription,
     });
 
     await db
@@ -67,6 +82,8 @@ export async function POST(req: NextRequest) {
       })
       .where(eq(orders.id, orderId));
 
+    console.log('[STK Push] Order updated:', orderId);
+
     return NextResponse.json({
       success: true,
       checkoutRequestId: stkResponse.CheckoutRequestID,
@@ -74,8 +91,10 @@ export async function POST(req: NextRequest) {
       message: stkResponse.CustomerMessage,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'STK Push failed';
-    console.error('[STK Push Error]', message);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error('[STK Push] Failed:', message);
+    if (stack) console.error('[STK Push] Stack:', stack);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
