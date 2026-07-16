@@ -140,7 +140,7 @@ export async function POST(request: Request) {
       deliveryType: data.deliveryType,
       paymentMethod: data.paymentMethod,
       address: data.address,
-    }).catch(console.error);
+    }).catch((e: unknown) => console.warn('[Email] Order confirmation skipped:', e instanceof Error ? e.message : String(e)));
 
     // Notify admin
     sendAdminNewOrderEmail({
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
       total: data.total,
       paymentMethod: data.paymentMethod,
       itemsCount: validItems.length,
-    }).catch(console.error);
+    }).catch((e: unknown) => console.warn('[Email] Admin notification skipped:', e instanceof Error ? e.message : String(e)));
 
     return NextResponse.json({
       orderId,
