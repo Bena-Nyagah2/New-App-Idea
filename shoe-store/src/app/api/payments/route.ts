@@ -93,7 +93,7 @@ export async function POST(request: Request) {
 
       // Decrement stock optimistically
       await db.update(variants)
-        .set({ stock: sql`GREATEST(${variants.stock} - ${item.quantity}, 0)` })
+        .set({ stock: sql`MAX(${variants.stock} - ${item.quantity}, 0)` })
         .where(eq(variants.id, v.id));
     }
 
