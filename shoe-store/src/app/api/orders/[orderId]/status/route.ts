@@ -3,6 +3,41 @@ import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
+export async function GET(
+  _request: Request,
+  { params }: { params: { orderId: string } }
+) {
+  try {
+    const { orderId } = params;
+
+    if (!orderId) {
+      return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
+    }
+
+    const order = await db.query.orders.findFirst({
+      where: eq(orders.id, orderId),
+      columns: {
+        status: true,
+        paymentStatus: true,
+        mpesaReceiptNumber: true,
+      },
+    });
+
+    if (!order) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      status: order.status,
+      paymentStatus: order.paymentStatus,
+      mpesaReceiptNumber: order.mpesaReceiptNumber,
+    });
+  } catch (error) {
+    console.error('Error fetching order status:', error);
+    return NextResponse.json({ error: 'Failed to fetch order status' }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: { orderId: string } }

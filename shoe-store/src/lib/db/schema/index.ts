@@ -76,15 +76,19 @@ export const orders = sqliteTable('orders', {
   deliveryType: text('delivery_type').notNull(), // 'boda' | 'courier' | 'pickup'
   deliveryFee: integer('delivery_fee').default(0).notNull(),
   status: text('status', { enum: ['pending', 'paid', 'confirmed', 'shipped', 'delivered', 'cancelled', 'returned'] }).default('pending').notNull(),
-  paymentMethod: text('payment_method', { enum: ['paystack', 'cod', 'mpesa'] }).notNull(),
+  paymentMethod: text('payment_method', { enum: ['paystack', 'cod', 'mpesa'] }).default('mpesa').notNull(),
   paymentStatus: text('payment_status', { enum: ['pending', 'paid', 'failed', 'refunded'] }).default('pending').notNull(),
   paystackReference: text('paystack_reference').unique(),
+  mpesaReceiptNumber: text('mpesa_receipt_number').unique(),
+  mpesaPhoneNumber: text('mpesa_phone_number'),
+  checkoutRequestId: text('checkout_request_id').unique(),
   subtotal: integer('subtotal').notNull(), // in cents
   tax: integer('tax').default(0).notNull(),
   total: integer('total').notNull(),
   notes: text('notes'), // Customer notes
   adminNotes: text('admin_notes'), // Internal notes
   confirmedAt: integer('confirmed_at', { mode: 'timestamp' }),
+  paidAt: integer('paid_at', { mode: 'timestamp' }),
   shippedAt: integer('shipped_at', { mode: 'timestamp' }),
   deliveredAt: integer('delivered_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(new Date()).notNull(),

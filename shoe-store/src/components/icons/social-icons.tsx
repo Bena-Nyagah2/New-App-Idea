@@ -3,6 +3,24 @@ interface SocialIconProps {
   className?: string;
 }
 
+export function MpesaLogo({ size = 20, className }: SocialIconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+    >
+      <rect width="24" height="24" rx="6" fill="#4CAF50" />
+      <path
+        d="M7.5 17V7.5h2.4l2.1 6.2L14.1 7.5h2.4v9.5h-1.8v-6.5l-2.2 6.5h-1.4l-2.2-6.5v6.5H7.5z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
 export function WhatsAppIcon({ size = 20, className }: SocialIconProps) {
   return (
     <svg

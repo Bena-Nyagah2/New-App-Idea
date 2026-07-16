@@ -25,7 +25,7 @@ export const checkoutSchema = z.object({
   area: z.string().min(2),
   address: z.string().min(5),
   deliveryType: z.enum(['boda', 'courier', 'pickup']),
-  paymentMethod: z.enum(['paystack', 'cod']),
+  paymentMethod: z.enum(['mpesa', 'paystack', 'cod']),
   notes: z.string().optional(),
 });
 
