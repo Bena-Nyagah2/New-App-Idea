@@ -45,9 +45,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Convert cents to KES for Safaricom (amount from frontend is in cents)
+    const amountInKes = Math.round(amount / 100);
+
     const stkResponse = await initiateStkPush({
       phoneNumber,
-      amount,
+      amount: amountInKes,
       accountRef: orderId,
       description: `Payment for order ${orderId}`,
     });
@@ -72,6 +75,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'STK Push failed';
+    console.error('[STK Push Error]', message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

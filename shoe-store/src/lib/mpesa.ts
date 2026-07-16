@@ -99,8 +99,8 @@ export async function initiateStkPush(args: {
       PartyB: SHORTCODE,
       PhoneNumber: phone,
       CallBackURL: CALLBACK_URL,
-      AccountReference: args.accountRef,
-      TransactionDesc: args.description || 'Shoe purchase',
+      AccountReference: args.accountRef.slice(0, 12),
+      TransactionDesc: (args.description || 'Payment').slice(0, 13),
     }),
   });
 
