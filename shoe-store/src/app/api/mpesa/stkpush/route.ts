@@ -70,6 +70,11 @@ export async function POST(req: NextRequest) {
       ResponseDescription: stkResponse.ResponseDescription,
     });
 
+    if (!stkResponse.CheckoutRequestID) {
+      console.error('[STK Push] Safaricom returned no CheckoutRequestID. Full response:', JSON.stringify(stkResponse));
+      return NextResponse.json({ error: 'Safaricom returned no CheckoutRequestID' }, { status: 502 });
+    }
+
     await db
       .update(orders)
       .set({
@@ -82,7 +87,7 @@ export async function POST(req: NextRequest) {
       })
       .where(eq(orders.id, orderId));
 
-    console.log('[STK Push] Order updated:', orderId);
+    console.log('[STK Push] Order', orderId, 'updated with checkoutRequestId:', stkResponse.CheckoutRequestID);
 
     return NextResponse.json({
       success: true,

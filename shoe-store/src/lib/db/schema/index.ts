@@ -75,7 +75,7 @@ export const orders = sqliteTable('orders', {
   county: text('county'), // Nairobi, Mombasa, etc.
   deliveryType: text('delivery_type').notNull(), // 'boda' | 'courier' | 'pickup'
   deliveryFee: integer('delivery_fee').default(0).notNull(),
-  status: text('status', { enum: ['pending', 'paid', 'confirmed', 'shipped', 'delivered', 'cancelled', 'returned'] }).default('pending').notNull(),
+  status: text('status', { enum: ['pending', 'paid', 'confirmed', 'completed', 'shipped', 'delivered', 'cancelled', 'returned'] }).default('pending').notNull(),
   paymentMethod: text('payment_method', { enum: ['paystack', 'cod', 'mpesa'] }).default('mpesa').notNull(),
   paymentStatus: text('payment_status', { enum: ['pending', 'paid', 'failed', 'refunded'] }).default('pending').notNull(),
   paystackReference: text('paystack_reference').unique(),

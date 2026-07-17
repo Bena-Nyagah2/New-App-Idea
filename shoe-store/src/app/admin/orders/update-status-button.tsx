@@ -11,7 +11,7 @@ interface UpdateStatusButtonProps {
   currentStatus: string;
 }
 
-const STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+const STATUSES = ['pending', 'confirmed', 'completed', 'shipped', 'delivered', 'cancelled'];
 
 export function UpdateStatusButton({ orderId, currentStatus }: UpdateStatusButtonProps) {
   const router = useRouter();
