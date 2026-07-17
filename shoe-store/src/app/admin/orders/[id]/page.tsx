@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { formatPrice } from '@/lib/utils';
 import { AnimatedCard } from '@/components/admin/animated';
 import { parseJsonSafe } from '@/lib/utils';
+import { UpdateStatusButton } from '../update-status-button';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,7 +60,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               Placed on {new Date(Number(order.createdAt ?? 0) * 1000).toLocaleString()}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <span className={`badge ${
               order.status === 'delivered' ? 'badge-success' :
               order.status === 'cancelled' ? 'badge-danger' :
@@ -70,6 +71,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <span className={`badge ${order.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}`}>
               {order.paymentStatus}
             </span>
+            <UpdateStatusButton orderId={order.id} currentStatus={order.status} />
           </div>
         </div>
       </AnimatedCard>
@@ -102,6 +104,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">Status:</span> <span className="capitalize">{order.paymentStatus}</span></p>
               {order.paystackReference && (
                 <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">Ref:</span> <span className="text-xs">{order.paystackReference}</span></p>
+              )}
+              {order.mpesaReceiptNumber && (
+                <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">M-Pesa Receipt:</span> <span className="text-xs font-mono">{order.mpesaReceiptNumber}</span></p>
+              )}
+              {order.mpesaPhoneNumber && (
+                <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">M-Pesa Phone:</span> <span className="text-xs">{order.mpesaPhoneNumber}</span></p>
               )}
               <div className="pt-2 border-t border-[var(--color-border)]">
                 <p className="text-[var(--color-text)] font-bold text-lg">{formatPrice(order.total)}</p>
