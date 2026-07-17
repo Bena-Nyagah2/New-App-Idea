@@ -55,7 +55,7 @@ export default async function SuppliersPage() {
                 <div className="flex gap-2">
                   <Link
                     href={`/admin/suppliers/${supplier.id}`}
-                    className="flex-1 bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-primary-500/10 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-center"
+                    className="flex-1 bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-zinc-700 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-center"
                   >
                     Edit
                   </Link>

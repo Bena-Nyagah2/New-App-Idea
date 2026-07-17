@@ -43,7 +43,7 @@ export function UpdateStatusButton({ orderId, currentStatus }: UpdateStatusButto
         <motion.button
           onClick={() => setOpen(!open)}
           whileTap={{ scale: 0.95 }}
-          className="bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-primary-500/10 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+          className="bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-zinc-700 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
         >
           {currentStatus} ▾
         </motion.button>

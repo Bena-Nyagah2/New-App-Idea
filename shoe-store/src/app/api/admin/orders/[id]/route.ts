@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
-const VALID_STATUSES = ['pending', 'paid', 'confirmed', 'shipped', 'delivered', 'cancelled', 'returned'] as const;
+const VALID_STATUSES = ['pending', 'paid', 'confirmed', 'completed', 'shipped', 'delivered', 'cancelled', 'returned'] as const;
 const VALID_PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded'] as const;
 
 export async function PATCH(

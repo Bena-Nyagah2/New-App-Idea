@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
-import { desc, sql, eq } from 'drizzle-orm';
+import { desc, sql, eq, and } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 import { AnimatedCard, StaggerContainer, StaggerItem } from '@/components/admin/animated';
@@ -9,13 +9,13 @@ import { UpdateStatusButton } from './update-status-button';
 export const dynamic = 'force-dynamic';
 
 interface OrdersPageProps {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; payment?: string }>;
 }
 
-async function getOrders(status?: string) {
-  const whereClause = status
-    ? eq(orders.status, status as 'pending' | 'paid' | 'confirmed' | 'completed' | 'shipped' | 'delivered' | 'cancelled' | 'returned')
-    : undefined;
+async function getOrders(status?: string, payment?: string) {
+  const conditions = [];
+  if (status) conditions.push(eq(orders.status, status as 'pending' | 'paid' | 'confirmed' | 'completed' | 'shipped' | 'delivered' | 'cancelled' | 'returned'));
+  if (payment) conditions.push(eq(orders.paymentMethod, payment as 'paystack' | 'cod' | 'mpesa'));
 
   return db
     .select({
@@ -29,34 +29,75 @@ async function getOrders(status?: string) {
       createdAt: orders.createdAt,
     })
     .from(orders)
-    .where(whereClause)
+    .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(desc(orders.createdAt))
     .limit(50);
 }
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
-  const { status } = await searchParams;
-  const ordersList = await getOrders(status);
+  const { status, payment } = await searchParams;
+  const ordersList = await getOrders(status, payment);
+
+  const statusFilters = ['pending', 'confirmed', 'completed', 'shipped', 'delivered', 'cancelled'];
+  const paymentFilters = [
+    { label: 'Online', value: 'paystack', icon: '💳' },
+    { label: 'COD', value: 'cod', icon: '💵' },
+    { label: 'M-Pesa', value: 'mpesa', icon: '📱' },
+  ];
+
+  function buildHref(s?: string, p?: string) {
+    const params = new URLSearchParams();
+    if (s) params.set('status', s);
+    if (p) params.set('payment', p);
+    const qs = params.toString();
+    return `/admin/orders${qs ? `?${qs}` : ''}`;
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
       <AnimatedCard>
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-[var(--color-text)]">Orders</h1>
-          <div className="flex gap-2">
-            {['pending', 'confirmed', 'shipped', 'delivered'].map(s => (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-[var(--color-text)]">Orders</h1>
+            <div className="flex gap-2">
+              {statusFilters.map(s => (
+                <Link
+                  key={s}
+                  href={status === s ? buildHref(undefined, payment) : buildHref(s, payment)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize ${
+                    status === s
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:bg-primary-50 dark:hover:bg-zinc-700 hover:text-primary-600'
+                  }`}
+                >
+                  {s}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[var(--color-text-muted)] font-medium">Payment:</span>
+            {paymentFilters.map(p => (
               <Link
-                key={s}
-                href={status === s ? '/admin/orders' : `/admin/orders?status=${s}`}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize ${
-                  status === s
+                key={p.value}
+                href={payment === p.value ? buildHref(status, undefined) : buildHref(status, p.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  payment === p.value
                     ? 'bg-primary-500 text-white'
-                    : 'bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600'
+                    : 'bg-[var(--color-surface-elevated)] text-[var(--color-text-muted)] hover:bg-primary-50 dark:hover:bg-zinc-700 hover:text-primary-600'
                 }`}
               >
-                {s}
+                {p.icon} {p.label}
               </Link>
             ))}
+            {(status || payment) && (
+              <Link
+                href="/admin/orders"
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40"
+              >
+                ✕ Clear
+              </Link>
+            )}
           </div>
         </div>
       </AnimatedCard>
@@ -85,7 +126,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                     </div>
                     <p className="text-sm text-[var(--color-text)]">{order.customerName} · {order.customerPhone}</p>
                     <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                      {order.paymentMethod === 'paystack' ? '💳 Online' : '💵 COD'} · {formatPrice(order.total)} · {new Date(Number(order.createdAt ?? 0) * 1000).toLocaleDateString()}
+                      {order.paymentMethod === 'paystack' ? '💳 Online' : order.paymentMethod === 'mpesa' ? '📱 M-Pesa' : '💵 COD'} · {formatPrice(order.total)} · {new Date(Number(order.createdAt ?? 0) * 1000).toLocaleDateString()}
                     </p>
                   </div>
                   <UpdateStatusButton orderId={order.id} currentStatus={order.status} />

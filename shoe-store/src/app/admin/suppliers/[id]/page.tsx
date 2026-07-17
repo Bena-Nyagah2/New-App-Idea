@@ -1,18 +1,18 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default function EditSupplierPage({ params }: PageProps) {
+  const { id } = params;
   const router = useRouter();
-  const { id } = React.use(params);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -28,13 +28,14 @@ export default function EditSupplierPage({ params }: PageProps) {
     fetch(`/api/admin/suppliers/${id}`)
       .then(res => res.json())
       .then(data => {
+        const s = data.supplier || data;
         setForm({
-          name: data.name || '',
-          contactName: data.contactName || '',
-          phone: data.phone || '',
-          email: data.email || '',
-          location: data.location || '',
-          notes: data.notes || '',
+          name: s.name || '',
+          contactName: s.contactName || '',
+          phone: s.phone || '',
+          email: s.email || '',
+          location: s.location || '',
+          notes: s.notes || '',
         });
       })
       .finally(() => setLoading(false));
@@ -130,5 +131,3 @@ export default function EditSupplierPage({ params }: PageProps) {
     </div>
   );
 }
-
-import React from 'react';
