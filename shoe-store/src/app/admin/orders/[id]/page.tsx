@@ -2,9 +2,8 @@ import { db } from '@/lib/db';
 import { orders, orderItems, products, variants } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, parseJsonSafe } from '@/lib/utils';
 import { AnimatedCard } from '@/components/admin/animated';
-import { parseJsonSafe } from '@/lib/utils';
 import { UpdateStatusButton } from '../update-status-button';
 
 export const dynamic = 'force-dynamic';
@@ -48,6 +47,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
   if (!order) notFound();
 
+  const addr = parseJsonSafe(order.shippingAddress, null) as { county?: string; area?: string; address?: string; notes?: string } | null;
+  const addressDisplay = addr
+    ? [addr.area, addr.county, addr.address].filter(Boolean).join(', ')
+      + (addr.notes ? ` (Notes: ${addr.notes})` : '')
+    : order.shippingAddress || `${order.county || ''} · ${order.deliveryType}`;
+
   return (
     <div className="space-y-6 animate-fade-in">
       <AnimatedCard>
@@ -87,7 +92,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               {order.customerEmail && (
                 <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">Email:</span> {order.customerEmail}</p>
               )}
-              <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">Address:</span> {order.shippingAddress || `${order.county || ''} · ${order.deliveryType}`}</p>
+              <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">Address:</span> {addressDisplay}</p>
               {order.notes && (
                 <p className="text-[var(--color-text)]"><span className="text-[var(--color-text-muted)]">Notes:</span> {order.notes}</p>
               )}

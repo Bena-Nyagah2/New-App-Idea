@@ -82,12 +82,6 @@ export default async function InventoryPage() {
                   </div>
 
                   <div className="px-4 pb-4 flex gap-2">
-                    <Link
-                      href={`/admin/inventory/${product.id}`}
-                      className="flex-1 bg-[var(--color-surface-elevated)] hover:bg-primary-50 dark:hover:bg-primary-500/10 text-[var(--color-text-muted)] hover:text-primary-600 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-center"
-                    >
-                      Edit
-                    </Link>
                     <ProductActions id={product.id} isActive={product.isActive} />
                   </div>
                 </div>

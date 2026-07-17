@@ -14,7 +14,7 @@ interface OrdersPageProps {
 
 async function getOrders(status?: string) {
   const whereClause = status
-    ? eq(orders.status, status as 'pending' | 'paid' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'returned')
+    ? eq(orders.status, status as 'pending' | 'paid' | 'confirmed' | 'completed' | 'shipped' | 'delivered' | 'cancelled' | 'returned')
     : undefined;
 
   return db

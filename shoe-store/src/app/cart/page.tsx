@@ -214,7 +214,7 @@ export default function CartPage() {
             </div>
 
             <MagneticButton className="w-full mt-6" size="lg">
-              <Link href="#" className="flex items-center justify-center gap-2 w-full">
+              <Link href="/checkout" className="flex items-center justify-center gap-2 w-full">
                 Continue to Checkout
                 <ArrowRight size={16} />
               </Link>
